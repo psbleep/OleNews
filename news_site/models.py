@@ -8,20 +8,20 @@ class NewsPost(models.Model):
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     author = models.TextField()
+
     def get_absolute_url(self):
-        return('news_post_detail', (),{
-            'slug': self.slug,
-            })
+        return '/news_post_detail/{}/'.format(self.slug)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slef.slug = slugify(self.title)
-            super(Post, self).save(*args, **kwargs)
+            self.slug = slugify(self.title)
+        super(NewsPost, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['created_on']
         def __unicode__(self):
             return self.title
+
 class Comment(models.Model):
     name = models.CharField(max_length=42)
     email = models.EmailField(max_length=75)
