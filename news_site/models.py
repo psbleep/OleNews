@@ -3,11 +3,12 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
 class NewsPost(models.Model):
+    author = models.CharField(max_length=64)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    author = models.TextField()
+    file_upload = models.FileField(upload_to="templates/",null=True, blank=True)
 
     def get_absolute_url(self):
         return '/news_post_detail/{}/'.format(self.slug)
