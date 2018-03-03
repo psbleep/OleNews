@@ -71,7 +71,8 @@ a good solution over all.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR],
+        'DIRS': [BASE_DIR,
+				'templates/News'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

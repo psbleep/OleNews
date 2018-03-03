@@ -18,6 +18,9 @@ class NewsPost(models.Model):
             self.slug = slugify(self.title)
         super(NewsPost, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.author
+
     class Meta:
         ordering = ['created_on']
         def __unicode__(self):
