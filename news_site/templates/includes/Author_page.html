@@ -1,6 +1,4 @@
-{% extends "home.html"%}
-{% block content%}
-<div class="contaner">
+
   <h1>Hello, world!</h1>
   <div class="row">
     {% for author in authors_names %}
@@ -11,7 +9,4 @@
       <p>{{ author.email }}</p>
     </div>
     {% endfor %}
-
   </div>
-</div>
-{% endblock %}
