@@ -32,6 +32,7 @@ DEBUG = os.environ.get("DEBUG")
 DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ALLOWED_HOSTS = [
 	'127.0.0.1',
@@ -62,10 +63,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Ole_Mundo.urls'
 
+'''
+Setting TEMPLATES Dir to BASE solves the dynamic author problem but is not
+a good solution over all.
+'''
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR,
+				'templates/News'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

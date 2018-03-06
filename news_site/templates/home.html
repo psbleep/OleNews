@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+  {% load staticfiles %}
+  {% block content %}
+
+    {% include "includes/navbar_main.html" %}
+<div id="wrapper">
+{% if page == 'home' %}
+    {% include "includes/home_landing.html" %}
+{% elif page == 'authors' %}
+  {% include "includes/Author_page.html" %}
+{% elif page == 'author_about' %}
+    {% include "includes/Author_content.html" %}
+{% endif %}
+</div>
+
+
+{% endblock %}
