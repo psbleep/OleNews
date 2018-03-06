@@ -1,19 +1,24 @@
-from news_site.models import NewsPost
+from news_site.models import NewsPost, Author
 from django.test import TestCase
 
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
 class NewsPostTestCase(TestCase):
+    def setUp(self):
+        self.author = Author.objects.create(first_name='Test', last_name='Author',
+                                            email='test@author.com')
+
     def create_news_post(self, title='Hello World', slug='hello-world',
                          content='Hello World, what more is there to say?',
-                         author='Test Author'):
+                         author=None):
         print("Creating Test NewsPost")
-        return NewsPost(title=title, slug=slug, content=content, author=author)
+        return NewsPost(title=title, slug=slug, content=content,
+                        author=self.author)
 
     def test_news_post_author_url(self):
         news_post = self.create_news_post()
-        url = '/articles/{0}'.format(news_post.author)
+        url = '/articles/{}'.format(news_post.author.id)
         print("Asserting Url Creation")
         print(url.replace(' ', '%'))
         response = self.client.get(url.replace(' ', '%'), follow=True)
