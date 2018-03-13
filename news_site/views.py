@@ -5,6 +5,10 @@ from django.http import Http404
 from django.template import Template
 from django.template.loader import get_template
 
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+
+
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
     articles = NewsPost.objects.filter(author = author)
@@ -28,3 +32,17 @@ def author_general(request):
 
 def home(request):
     return render(request, 'home.html', {'page': 'home'})
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'home.html', {'form': form, 'page': 'register'})
