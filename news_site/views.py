@@ -4,10 +4,9 @@ from news_site.models import Author
 from django.http import Http404
 from django.template import Template
 from django.template.loader import get_template
-
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-
+from .forms import SignupForm
 
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
@@ -34,15 +33,18 @@ def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
 def signup(request):
+    # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        # create a form instance and populate it with data from the request:
+        form = SignupForm(request.POST)
+        # check whether it's valid:
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('home')
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/')
+
+    # if a GET (or any other method) we'll create a blank form
     else:
-        form = UserCreationForm()
-    return render(request, 'home.html', {'form': form, 'page': 'register'})
+        form = SignupForm()
+    return render(request, 'registration/signup.html', {'form': form})

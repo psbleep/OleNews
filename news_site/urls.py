@@ -9,4 +9,5 @@ urlpatterns = [
     path('articles/<int:author_id>', views.author_articles,
          name="author_articles"),
     path('signup/', views.signup, name="signup"),
+    path('welcome/', views.signup, name="signup"),    
     ]
