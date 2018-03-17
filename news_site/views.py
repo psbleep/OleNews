@@ -7,6 +7,7 @@ from django.template.loader import get_template
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignupForm
+from django.http import HttpResponseRedirect
 
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
@@ -48,3 +49,14 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+def login_check(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return HttpResponseRedirect('/')
+    else:
+        return HttpResponseRedirect('/')

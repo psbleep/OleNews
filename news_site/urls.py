@@ -9,5 +9,7 @@ urlpatterns = [
     path('articles/<int:author_id>', views.author_articles,
          name="author_articles"),
     path('signup/', views.signup, name="signup"),
-    path('welcome/', views.signup, name="signup"),    
+    path('welcome/', views.signup, name="signup"),
+    #Will need to add some security to .login_check
+    path('loging-in', views.login_check, name="login_check"),
     ]
