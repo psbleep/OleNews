@@ -6,7 +6,7 @@ from django.template import Template
 from django.template.loader import get_template
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignupForm
+from .forms import SignupForm, SigninForm
 from django.http import HttpResponseRedirect
 
 def author_articles(request, author_id):
@@ -33,27 +33,39 @@ def author_general(request):
 def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
-def signup(request):
+def sign_in(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = SignupForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
+            #login(request, user)
             return HttpResponseRedirect('/')
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = SigninForm()
+    return render(request, 'registration/sign_in.html', {'form': form})
 
+def sign_up(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return HttpResponseRedirect('/')
     # if a GET (or any other method) we'll create a blank form
     else:
         form = SignupForm()
-    return render(request, 'registration/signup.html', {'form': form})
-
+    return render(request, 'registration/sign_up.html', {'form': form})
 
 def login_check(request):
     username = request.POST['username']
     password = request.POST['password']
+    print(password)
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)

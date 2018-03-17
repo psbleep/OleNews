@@ -8,8 +8,8 @@ urlpatterns = [
     path('authors/<str:name>', views.author_about, name="author_info"),
     path('articles/<int:author_id>', views.author_articles,
          name="author_articles"),
-    path('signup/', views.signup, name="signup"),
-    path('welcome/', views.signup, name="signup"),
-    #Will need to add some security to .login_check
-    path('loging-in', views.login_check, name="login_check"),
+    path('signin/', views.sign_in, name="sign_in"),
+    path('signup/', views.sign_up, name="sign_up"),
+    #Will need to add some security to .login_check or trash
+    path('login_check', views.login_check, name="login_check"),
     ]
