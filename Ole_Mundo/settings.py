@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv,find_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 dotenv_path = '~/Documents/Django/Ole_Mundo/Ole_Mundo/.env'
 load_dotenv(find_dotenv())
@@ -35,7 +35,8 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ALLOWED_HOSTS = [
-	'127.0.0.1',
+    '127.0.0.1',
+    'localhost',
 ]
 
 
@@ -144,3 +145,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
