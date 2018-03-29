@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from news_site.models import NewsPost
 from news_site.models import Author
-from django.http import Http404
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
 from .forms import SignupForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,Http404
 
 
 def author_articles(request, author_id):
@@ -15,7 +15,7 @@ def author_articles(request, author_id):
 
 
 def author_about(request, name):
-    articles = NewsPost.objects.filter(author__last_name=name)
+    articles = NewsPost.objects.filter(author__user__last_name=name)
     return render(request, 'home.html', {'page': 'author_about',
                                          'titles': articles})
 
@@ -46,10 +46,14 @@ def sign_up(request):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
-            author = Author.objects.create(user=user)
-            author.save()
-            login(request, user)
-            return HttpResponseRedirect('/')
+            if user is not None:
+                #new_user = User.objects.create(user=user)
+                user.save()#new_user.save()
+                login(request, user)
+                return HttpResponseRedirect('/')
+            else:
+                return HttpResponseRedirect('/sign_up.html')
+                #To Do: raise flag for non-authentication
         else:
             raise ValueError(form.errors)
     # if a GET (or any other method) we'll create a blank form

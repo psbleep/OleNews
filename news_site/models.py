@@ -6,13 +6,10 @@ from django.template.defaultfilters import slugify
 class Author(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
-
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
-
     def __str__(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
-
 
 class NewsPost(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
