@@ -1,10 +1,9 @@
-from django.shortcuts import render
-from news_site.models import NewsPost
-from news_site.models import Author
+from .models import NewsPost, Author
+from .forms import SignupForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .forms import SignupForm
-from django.http import HttpResponseRedirect,Http404
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import render
 
 
 def author_articles(request, author_id):
@@ -44,18 +43,24 @@ def sign_up(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
+            password = form.cleaned_data.get('password1')
+            email = form.cleaned_data.get('email')
+            if len(User.objects.filter(email=email).all()) > 1:
+                form.add_error('email',
+                               'A user with that email already exists.')
+                return render(request, 'registration/sign_up.html',
+                              {'form': form}, status=400)
+            user = authenticate(username=username, password=password)
             if user is not None:
-                #new_user = User.objects.create(user=user)
-                user.save()#new_user.save()
+                user.save()
                 login(request, user)
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/', status=201)
             else:
-                return HttpResponseRedirect('/sign_up.html')
-                #To Do: raise flag for non-authentication
+                return render(request, 'registration/sign_up.html',
+                              {'form': form}, status=404)
         else:
-            raise ValueError(form.errors)
+            return render(request, 'registration/sign_up.html',
+                          {'form': form}, status=400)
     # if a GET (or any other method) we'll create a blank form
     else:
         form = SignupForm()
