@@ -60,7 +60,7 @@ class NewsPostTestCase(TestCase):
 
 class UserSignupTestCase(TestCase):
 
-    def test_author_gets_created(self):
+    def test_user_gets_created(self):
         response = self.client.post(
             '/signup/',
             {'username': 'tauthor',
@@ -70,6 +70,52 @@ class UserSignupTestCase(TestCase):
              'first_name': 'Test',
              'last_name': 'Author'}
         )
-        self.assertEqual(response.status_code, 302)
-        test_author = Author.objects.first()
-        self.assertEqual(test_author.username, 'tauthor')
+        self.assertEqual(response.status_code, 201)
+        test_user = User.objects.first()
+        self.assertEqual(test_user.username, 'tauthor')
+
+    def test_sign_up_passwords_do_not_match(self):
+        response = self.client.post(
+            '/signup/',
+            {'username': 'tauthor',
+             'email': 'test@author.com',
+             'password1': 'setec_astronomy',
+             'password2': 'other_astronomy',
+             'first_name': 'Test',
+             'last_name': 'Author'}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('The two password fields didn&#39;t match',
+                      response.content.decode())
+
+    def test_sign_up_username_already_exists(self):
+        user = User.objects.create_user('tauthor', 'test@author.com',
+                                        'setec_astronomy')
+        user.save()
+        response = self.client.post(
+            '/signup/',
+            {'username': 'tauthor',
+             'email': 'test@author.com',
+             'password1': 'setec_astronomy',
+             'password2': 'setec_astronomy',
+             'first_name': 'Test',
+             'last_name': 'Author'})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('A user with that username already exists',
+                      response.content.decode())
+
+    def test_sign_up_email_already_exists(self):
+        user = User.objects.create_user('first_author', 'test@author.com',
+                                        'setec_astronomy')
+        user.save()
+        response = self.client.post(
+            '/signup/',
+            {'username': 'tauthor',
+             'email': 'test@author.com',
+             'password1': 'setec_astronomy',
+             'password2': 'setec_astronomy',
+             'first_name': 'Test',
+             'last_name': 'Author'})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('A user with that email already exists',
+                      response.content.decode())
