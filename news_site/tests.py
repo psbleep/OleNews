@@ -73,3 +73,13 @@ class UserSignupTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         test_author = Author.objects.first()
         self.assertEqual(test_author.username, 'tauthor')
+    def test_uniqe_unername(self):
+        response = self.client.post(
+            '/signup/',
+            {'username': 'tauthor',
+             'email': 'test1@author.com',
+             'password1': 'setec_astronomy1',
+             'password2': 'setec_astronomy1',
+             'first_name': 'Test1',
+             'last_name': 'Author1'}
+        self.assertEqual(response.status_code, 000) ##To Do Status Code

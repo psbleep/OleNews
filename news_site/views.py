@@ -55,7 +55,7 @@ def sign_up(request):
                 return HttpResponseRedirect('/sign_up.html')
                 #To Do: raise flag for non-authentication
         else:
-            raise ValueError(form.errors)
+            raise ValueError(form.errors)#The error is thrown here. I only make vauge comments 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = SignupForm()
