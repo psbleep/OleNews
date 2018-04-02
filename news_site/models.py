@@ -1,15 +1,19 @@
 from django.db import models
 from django.conf import settings
 from django.template.defaultfilters import slugify
+# from forum.models import Thread
 
 
 class Author(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
+
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
+
     def __str__(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
+
 
 class NewsPost(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
@@ -39,9 +43,15 @@ class NewsPost(models.Model):
 
 
 class Comment(models.Model):
-    name = models.CharField(max_length=42)
-    email = models.EmailField(max_length=75)
-    website = models.URLField(max_length=200, null=True, blank=True)
+    title = models.CharField(max_length=42)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     content = models.TextField()
-    post = models.ForeignKey(NewsPost, on_delete=models.CASCADE)
+    post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
+                             null=True, blank=True)
+#     thread = models.ForeignKey(Thread, on_delete=models.CASCADE,
+#                                null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
+
+    def __getattr__(self, attribute):
+        return getattr(self.user, attribute)

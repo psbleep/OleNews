@@ -60,7 +60,7 @@ class NewsPostTestCase(TestCase):
 
 class UserSignupTestCase(TestCase):
 
-    def test_author_gets_created(self):
+    def test_user_gets_created(self):
         response = self.client.post(
             '/signup/',
             {'username': 'tauthor',
