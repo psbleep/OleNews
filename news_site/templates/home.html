@@ -1,8 +1,8 @@
 {% extends "index.html" %}
-  {% load staticfiles %}
-  {% block content %}
+{% load staticfiles %}
+{% block content %}
 
-    {% include "includes/navbar_main.html" %}
+{% include "includes/navbar_main.html" %}
 <div id="wrapper">
 {%  if user.is_authenticated %}
 <h1>Hey Look at That! {{  user.username  }}</h1>
@@ -18,6 +18,8 @@
     {% include "includes/Author_content.html" %}
 {% elif page == 'register' %}
     {% include "registration/signup.html" %}
+{% elif page == 'user_profile' %}
+    {% include "includes/user_profile.html" %}
 {% endif %}
 </div>
 

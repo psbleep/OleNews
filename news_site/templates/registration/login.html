@@ -2,9 +2,17 @@
 
 {% block content %}
   <h2>Login</h2>
-  <form method="post">
+  <form  method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form %}
+    <p>
+      {{ field.label_tag }}<br>
+      {{ field }}
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+    </p>
+    {% endfor %}
     <button type="submit">Login</button>
   </form>
   <a  href="/signup"><button type="button">sign up</button></a>

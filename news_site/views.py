@@ -1,10 +1,11 @@
 from .models import NewsPost, Author
-from .forms import SignupForm
+from .forms import SignupForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 
+from django.contrib.auth.decorators import login_required
 
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
@@ -20,7 +21,7 @@ def author_about(request, name):
 def articles_main(request):
     return render(request, 'home.html')#Will need to make Articles.html
     '''
-    Atricles will need to display articles based on user like or new. 
+    Atricles will need to display articles based on user like or new.
     '''
 
 '''
@@ -41,6 +42,10 @@ def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
 
+@login_required
+def user_profile(request):
+    return render(request, 'user_profile.html')
+
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -58,7 +63,7 @@ def sign_up(request):
             if user is not None:
                 user.save()
                 login(request, user)
-                return HttpResponseRedirect('/', status=201)
+                return HttpResponseRedirect('user/',status=201)
             else:
                 return render(request, 'registration/sign_up.html',
                               {'form': form}, status=404)
@@ -69,3 +74,20 @@ def sign_up(request):
     else:
         form = SignupForm()
     return render(request, 'registration/sign_up.html', {'form': form})
+
+
+
+def log_in(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect('/user')
+        else:
+            return render(request, 'registration/sign_up.html',
+                          {'form': form}, status=400)
+    else:
+        form_lin = LoginForm()
+        return render(request, 'registration/login.html', {'form': form_lin})

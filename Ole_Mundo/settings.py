@@ -89,6 +89,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Ole_Mundo.wsgi.application'
 
+
 LOGIN_REDIRECT_URL = '/'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
