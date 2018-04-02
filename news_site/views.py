@@ -17,7 +17,11 @@ def author_about(request, name):
     articles = NewsPost.objects.filter(author__user__last_name=name)
     return render(request, 'home.html', {'page': 'author_about',
                                          'titles': articles})
-
+def articles_main(request):
+    return render(request, 'home.html')#Will need to make Articles.html
+    '''
+    Atricles will need to display articles based on user like or new. 
+    '''
 
 '''
 To Do: Find better naming conventions set up Author login and have it generate
