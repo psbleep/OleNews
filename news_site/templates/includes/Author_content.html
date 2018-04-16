@@ -9,15 +9,15 @@
 <table id="example" class="" cellspacing="0" width="100%">
   <thead>
    <tr>
-    <th>Author</th>
+    <th>Articles List</th>
     <th>1</th>
     <th>1</th>
    </tr>
  </thead>
- {% for title in titles %}
+ {% for article in articles %}
  <tbody>
   <tr>
-    <td>{{ title }}</td>
+    <td><a href = "{{ author }}/{{ article.slug }}">{{ article.title }}</a></td>
     <td>2</td><!--What to put here ?-->
     <td>3</td>
   </tr>

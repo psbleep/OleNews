@@ -3,7 +3,7 @@
   <div class="row">
     {% for author in authors_names %}
     <div class="col-sm-8">
-      <p>{{ author.last_name }}, {{ author.first_name}}</p>
+      <p><a href = "/authors/{{ author.last_name }}">{{ author.last_name }}, {{ author.first_name}}</a></p>
     </div>
     <div class="col-sm-4">
       <p>{{ author.email }}</p>
