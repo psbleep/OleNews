@@ -21,8 +21,11 @@ class NewsPost(models.Model):
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    file_upload = models.FileField(upload_to="templates/",
-                                   null=True)
+    file_upload = models.FileField(upload_to="news_site/templates/news_atricles/"
+                                   .format(author.get_attname()),null=True)
+
+    def get_author_id(self):
+        return self.author.id
 
     def get_absolute_url(self):
         return '/news_post_detail/{}/'.format(self.slug)

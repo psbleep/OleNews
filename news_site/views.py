@@ -14,25 +14,26 @@ def author_articles(request, author_id):
                                          'titles': articles})
 
 
-def author_about(request, name):
-    print(name)
-    #articles = NewsPost.objects.filter(author__user__last_name=name)
-    author   = Author.objects.filter(user__last_name=name)
-    articles = NewsPost.objects.all().filter(author__user__last_name=name)
-    print(author)
-    print(articles[0].slug)
+def author_about(request, author_id):
+    author   = Author.objects.get(id=author_id)
+    articles = NewsPost.objects.all().filter(id=author_id)
     #print(articles[0])
     return render(request, 'home.html', {'page': 'author_about',
-                                         'author': name,
+                                         'author': author_id ,
                                          'articles': articles})
 def articles_main(request):
     return render(request, 'home.html')#Will need to make Articles.html
     '''
     Atricles will need to display articles based on user like or new.
     '''
-def author_article_show(request,name,article):
-    return render(request, 'home.html', {'page': 'author_articles_news_articles',
-                                         'titles': article})
+
+def author_article_show(request,author_id,article):
+    author   = Author.objects.get(id=author_id)
+    main_article = NewsPost.objects.filter(slug=article)
+    print(author.last_name)
+    print("___________________________________")
+    return render(request, 'display_article_base.html', {'page': 'author_articles_news_articles',
+                                         'article': main_article[0], 'author': author, 'file_name':main_article[0].file_upload})
 
 
 '''
