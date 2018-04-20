@@ -1,10 +1,10 @@
 from .models import NewsPost, Author
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm, CommentForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
-
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 def author_articles(request, author_id):
@@ -29,18 +29,32 @@ def articles_main(request):
 
 def author_article_show(request,author_id,article):
     author   = Author.objects.get(id=author_id)
-    main_article = NewsPost.objects.filter(slug=article)
-    print(author.last_name)
-    print("___________________________________")
+    main_article = NewsPost.objects.get(slug=article)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.post = main_article
+            post.user = request.user
+            post.created = timezone.now()
+            post.updated = timezone.now()
+            post.approved = True
+            post.save()
+    else:
+        form = CommentForm()
     return render(request, 'display_article_base.html', {'page': 'author_articles_news_articles',
-                                         'article': main_article[0], 'author': author, 'file_name':main_article[0].file_upload})
+                                         'article': main_article,
+                                         'author': author,
+                                         'file_name':main_article.file_upload,
+                                         'form': form},)
 
 
 '''
 To Do: Find better naming conventions set up Author login and have it generate
 a test for this URL convention
 '''
-
+def comment_submit(request):
+    return ''
 
 def author_general(request):
     authors = Author.objects.all()

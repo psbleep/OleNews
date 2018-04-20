@@ -46,15 +46,21 @@ class NewsPost(models.Model):
 
 
 class Comment(models.Model):
-    title = models.CharField(max_length=42)
+    post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
+                             null=True, blank=True, related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     content = models.TextField()
-    post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
-                             null=True, blank=True)
-#     thread = models.ForeignKey(Thread, on_delete=models.CASCADE,
-#                                null=True, blank=True)
-    created_on = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    approved = models.BooleanField(default=False)
 
+    def approve(self):
+        self.approved = True
+        self.save()
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
+    def __str__(self):
+        return 'Comment by {} on {}'.format(self.name, self.post)
+    class Meta:
+        ordering = ('created',)

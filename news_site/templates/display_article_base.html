@@ -42,8 +42,6 @@
     "description": "{{ article.content }}"
   }
   </script>
-
-
 </head>
 {% include "includes/navbar_main.html" %}
 
@@ -51,6 +49,9 @@
 {% with template_name=file_name|stringformat:"s" %}
 {% include ""|add:template_name %}
 {% endwith %}
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+{% include "includes/comments.html" %}
 </div>
-
+</div>
 {% endblock %}
