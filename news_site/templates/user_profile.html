@@ -5,10 +5,30 @@
 {% include "includes/navbar_main.html" %}
 <h1>Temp User Profile Layout</h1>
 
-<div class="container">
-  <h2>{{  user.username  }}</h2>
-  <div class="panel panel-default">
-    <div class="panel-body">Info</div>
+<div class="container-fluid">
+  <div class = "row content">
+    <div class="col-sm-3 sidenav">
+      <img style="max-width:200px" class="img-thumbnail " src="{% static "img/Temp_profile.jpeg" %}">
+      <h3>{{  user.username  }} Profile</h3>
+      <ul>
+        <li><b>Joined</b></li>
+        <li><b>Likes</b></li>
+        <li><b>Comments</b></li>
+      </ul><br>
+    </div>
+    <div class="col-sm-8">
+      <div class="panel panel-default">
+          <div class = "panel-heading">
+            <h4>{{  user.username  }} Bio</h4>
+          </div>
+          <div class="panel-body">
+            <p>This is a Bio which the User can write about themselves. We
+            will need to add an edit function to User account that way the user
+            can edit thier profile and do other stufff and fill up this with a few
+            more words. </p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
