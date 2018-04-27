@@ -61,6 +61,6 @@ class Comment(models.Model):
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
     def __str__(self):
-        return 'Comment by {} on {}'.format(self.name, self.post)
+        return 'Comment by {} on {}'.format(self.user, self.post)
     class Meta:
         ordering = ('created',)

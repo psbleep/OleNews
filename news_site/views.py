@@ -16,8 +16,8 @@ def author_articles(request, author_id):
 
 def author_about(request, author_id):
     author   = Author.objects.get(id=author_id)
-    articles = NewsPost.objects.all().filter(id=author_id)
-    #print(articles[0])
+    articles = NewsPost.objects.filter(author=author)
+    print(articles)
     return render(request, 'home.html', {'page': 'author_about',
                                          'author': author_id ,
                                          'articles': articles})
