@@ -3,7 +3,7 @@ from .forms import SignupForm, LoginForm, CommentForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
@@ -69,9 +69,11 @@ def home(request):
 
 
 @login_required
-def user_profile(request):
-    return render(request, 'user_profile.html')
-
+def user_profile(request, user_name):
+    if(user_name == request.user.username):
+        return render(request, 'user_profile.html')
+    else:
+        return redirect('/user/{}'.format(request.user.username))
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -110,7 +112,7 @@ def log_in(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect('/user')
+            return HttpResponseRedirect('/user/{}'.format(username))
         else:
             return render(request, 'registration/sign_up.html',
                           {'form': form}, status=400)
