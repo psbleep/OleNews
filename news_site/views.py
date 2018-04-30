@@ -75,7 +75,11 @@ def home(request):
 @login_required
 def user_profile(request, user_name):
     if(user_name == request.user.username):
-        return render(request, 'user_profile.html')
+        liked_articles = request.user.users_liked.all()
+        total_likes = len(liked_articles)
+        return render(request, 'user_profile.html', {'likes': total_likes,
+                                                     'liked_articles': liked_articles
+                                                     })
     else:
         return redirect('/user/{}'.format(request.user.username))
 
@@ -134,8 +138,10 @@ def like(request):
         if newspost.users_liked.filter(id=user.id).exists():
             print("Removing User")
             newspost.users_liked.remove(user)
+            newspost.save()
         else:
             print("Adding User")
             newspost.users_liked.add(user)
+            newspost.save()
     ctx = {'likes_count':newspost.total_likes}
     return HttpResponse(json.dumps(ctx), content_type='application/json')

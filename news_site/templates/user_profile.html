@@ -12,7 +12,7 @@
       <h3>{{  user.username  }} Profile</h3>
       <ul>
         <li><b>Joined: {{  user.date_joined|date:"F-Y"   }}</b></li>
-        <li><b>Likes</b></li>
+        <li><b>Likes: {{ likes }}</b></li>
         <li><b>Comments</b></li>
       </ul><br>
     </div>
@@ -26,6 +26,30 @@
             will need to add an edit function to User account that way the user
             can edit thier profile and do other stufff and fill up this with a few
             more words. </p>
+        </div>
+        </div>
+        <div class="panel panel-default">
+          <div class = "panel-heading">
+           <h4>Favorite Articles</h4>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Article</th>
+                <th>Author</th>
+                <th>Something?</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for article in liked_articles %}
+              <tr>
+                <td>{{ article }}</td>
+                <td>{{ article.author }}</td>
+                <td>{{ article.content }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

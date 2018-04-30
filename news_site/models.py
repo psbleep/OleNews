@@ -14,7 +14,6 @@ class Author(models.Model):
     def __str__(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
-
 class NewsPost(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -31,7 +30,6 @@ class NewsPost(models.Model):
         Return total_likes
         '''
         return self.users_liked.count()
-
 
     def get_author_id(self):
         return self.author.id
@@ -52,7 +50,6 @@ class NewsPost(models.Model):
 
         def __unicode__(self):
             return self.title
-
 
 class Comment(models.Model):
     post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
