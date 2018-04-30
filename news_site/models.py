@@ -23,6 +23,15 @@ class NewsPost(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     file_upload = models.FileField(upload_to="news_site/templates/news_atricles/"
                                    .format(author.get_attname()),null=True)
+    users_liked = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked')
+
+    @property
+    def total_likes(self):
+        '''
+        Return total_likes
+        '''
+        return self.users_liked.count()
+
 
     def get_author_id(self):
         return self.author.id
@@ -61,6 +70,8 @@ class Comment(models.Model):
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
     def __str__(self):
-        return 'Comment by {} on {}'.format(self.user, self.post)
+        return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
+                                                                self.post,
+                                                                self.approved)
     class Meta:
         ordering = ('created',)

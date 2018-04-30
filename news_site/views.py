@@ -2,10 +2,11 @@ from .models import NewsPost, Author
 from .forms import SignupForm, LoginForm, CommentForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+import json
 
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
@@ -30,6 +31,7 @@ def articles_main(request):
 def author_article_show(request,author_id,article):
     author   = Author.objects.get(id=author_id)
     main_article = NewsPost.objects.get(slug=article)
+    like_count = main_article.users_liked.distinct().count()
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -46,7 +48,9 @@ def author_article_show(request,author_id,article):
                                          'article': main_article,
                                          'author': author,
                                          'file_name':main_article.file_upload,
-                                         'form': form},)
+                                         'form': form,
+                                         'likes': like_count,
+                                         'post': article},)
 
 
 '''
@@ -74,6 +78,7 @@ def user_profile(request, user_name):
         return render(request, 'user_profile.html')
     else:
         return redirect('/user/{}'.format(request.user.username))
+
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -119,3 +124,18 @@ def log_in(request):
     else:
         form_lin = LoginForm()
         return render(request, 'registration/login.html', {'form': form_lin})
+
+#Working on Likes May be very Buggy
+def like(request):
+    if request.method == 'POST':
+        user = request.user
+        slug = request.POST.get('slug', None)
+        newspost = NewsPost.objects.get(slug=slug)
+        if newspost.users_liked.filter(id=user.id).exists():
+            print("Removing User")
+            newspost.users_liked.remove(user)
+        else:
+            print("Adding User")
+            newspost.users_liked.add(user)
+    ctx = {'likes_count':newspost.total_likes}
+    return HttpResponse(json.dumps(ctx), content_type='application/json')

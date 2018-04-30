@@ -15,4 +15,5 @@ urlpatterns = [
     path('signup/', views.sign_up, name="sign_up"),
     path('logout/', auth_views.logout, name="logout"),
     path('comment_submit/', views.comment_submit, name="comment_submit"),
+    path('like/', views.like, name='like'),
 ]

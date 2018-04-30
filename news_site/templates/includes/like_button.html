@@ -1,0 +1,25 @@
+
+
+<div class = "">
+  <p>
+    <a class="btn btn-info btn-lg likes" onclick="addLike()" id = "show_results">
+     <span class="glyphicon glyphicon-heart" ></span> Likes: 0
+    </a>
+  </p>
+</div>
+
+<script>
+function addLike(){
+  $.ajax({
+    type: "POST",
+    url: "{% url 'like' %}",
+    data: {'slug': '{{ post }}', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+    dataType: "json",
+    success: function(response) {
+      document.getElementById("show_results").innerHTML = '<span class="glyphicon glyphicon-heart" ></span> Likes: ' + response.likes_count;
+      alert(result)
+      alert(response.likes_count);
+    },
+  });
+}
+</script>

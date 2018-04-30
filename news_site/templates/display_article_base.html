@@ -49,6 +49,7 @@
 {% with template_name=file_name|stringformat:"s" %}
 {% include ""|add:template_name %}
 {% endwith %}
+{% include "includes/like_button.html" %}
 <div class="row">
 <div class="col-md-8 col-md-offset-2">
 {% include "includes/comments.html" %}
