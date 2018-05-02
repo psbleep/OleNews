@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 class NewsPostTestCase(TestCase):
     def setUp(self):
         user = User.objects.create_user(
@@ -12,14 +13,15 @@ class NewsPostTestCase(TestCase):
 
     def create_news_post(self, title='Hello World', slug='hello-world',
                          content='Hello World, what more is there to say?',
-                         author=None, file_upload = 'news_site/templates/news_atricles/'):
+                         author=None,
+                         file_upload='news_site/templates/news_atricles/'):
         print("Creating Test NewsPost")
-        new_file = SimpleUploadedFile(name='test.html', content=open("templates/test.html").read(),
-                                      content_type='text/plain')
+        new_file = SimpleUploadedFile(
+            name='test.html', content=open("templates/test.html", "rb").read(),
+            content_type='text/plain')
         author = author or self.author
         return NewsPost(title=title, slug=slug, content=content,
-                        author=author, file_upload=file_upload)
-
+                        author=author, file_upload=new_file)
 
     def test_news_post_author_url(self):
         news_post = self.create_news_post()
@@ -77,7 +79,7 @@ class UserSignupTestCase(TestCase):
         '''
         201: resulted in a new resource being created
         '''
-        test_author = Author.objects.first()
+        test_author = User.objects.first()
         self.assertEqual(test_author.username, 'tauthor')
 
     def test_uniqe_unername(self):
@@ -90,4 +92,4 @@ class UserSignupTestCase(TestCase):
              'first_name': 'Test1',
              'last_name': 'Author1'}
         )
-        self.assertEqual(response.status_code, 201) ##To Do Status Code
+        self.assertEqual(response.status_code, 201)  # To Do Status Code
