@@ -4,11 +4,6 @@
 
 {% include "includes/navbar_main.html" %}
 <div id="wrapper">
-{%  if user.is_authenticated %}
-<h1>Hey Look at That! {{  user.username  }}</h1>
-{%  elif user.is_authenticated == False%}
-<h1>Not Logged in</h1>
-{% endif %}
 
 {% if page == 'home' %}
     {% include "includes/home_landing.html" %}
