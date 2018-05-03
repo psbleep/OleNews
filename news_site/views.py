@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import json
 
+
 def author_articles(request, author_id):
     author = Author.objects.get(id=author_id)
     articles = NewsPost.objects.filter(author=author)
@@ -16,20 +17,23 @@ def author_articles(request, author_id):
 
 
 def author_about(request, author_id):
-    author   = Author.objects.get(id=author_id)
+    author = Author.objects.get(id=author_id)
     articles = NewsPost.objects.filter(author=author)
     print(articles)
     return render(request, 'home.html', {'page': 'author_about',
-                                         'author': author_id ,
+                                         'author': author_id,
                                          'articles': articles})
+
+
 def articles_main(request):
-    return render(request, 'home.html')#Will need to make Articles.html
+    return render(request, 'home.html')  # Will need to make Articles.html
     '''
     Atricles will need to display articles based on user like or new.
     '''
 
-def author_article_show(request,author_id,article):
-    author   = Author.objects.get(id=author_id)
+
+def author_article_show(request, author_id, article):
+    author = Author.objects.get(id=author_id)
     main_article = NewsPost.objects.get(slug=article)
     like_count = main_article.users_liked.distinct().count()
     if request.method == "POST":
@@ -44,21 +48,26 @@ def author_article_show(request,author_id,article):
             post.save()
     else:
         form = CommentForm()
-    return render(request, 'display_article_base.html', {'page': 'author_articles_news_articles',
-                                         'article': main_article,
-                                         'author': author,
-                                         'file_name':main_article.file_upload,
-                                         'form': form,
-                                         'likes': like_count,
-                                         'post': article},)
+    return render(request, 'display_article_base.html',
+                  {'page': 'author_articles_news_articles',
+                   'article': main_article,
+                   'author': author,
+                   'file_name': main_article.file_upload,
+                   'form': form,
+                   'likes': like_count,
+                   'post': article}
+                  )
 
 
 '''
 To Do: Find better naming conventions set up Author login and have it generate
 a test for this URL convention
 '''
+
+
 def comment_submit(request):
     return ''
+
 
 def author_general(request):
     authors = Author.objects.all()
@@ -77,11 +86,12 @@ def user_profile(request, user_name):
     if(user_name == request.user.username):
         liked_articles = request.user.users_liked.all()
         total_likes = len(liked_articles)
-        return render(request, 'user_profile.html', {'likes': total_likes,
-                                                     'liked_articles': liked_articles
-                                                     })
+        return render(request, 'user_profile.html',
+                      {'likes': total_likes,
+                       'liked_articles': liked_articles})
     else:
         return redirect('/user/{}'.format(request.user.username))
+
 
 def sign_up(request):
     if request.method == 'POST':
@@ -100,7 +110,7 @@ def sign_up(request):
             if user is not None:
                 user.save()
                 login(request, user)
-                return HttpResponseRedirect('user/',status=201)
+                return HttpResponseRedirect('user/', status=201)
             else:
                 return render(request, 'registration/sign_up.html',
                               {'form': form}, status=404)
@@ -113,7 +123,6 @@ def sign_up(request):
     return render(request, 'registration/sign_up.html', {'form': form})
 
 
-
 def log_in(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -122,14 +131,12 @@ def log_in(request):
         if user is not None:
             login(request, user)
             return HttpResponseRedirect('/user/{}'.format(username))
-        else:
-            return render(request, 'registration/sign_up.html',
-                          {'form': form}, status=400)
     else:
         form_lin = LoginForm()
         return render(request, 'registration/login.html', {'form': form_lin})
 
-#Working on Likes May be very Buggy
+
+# Working on Likes May be very Buggy
 def like(request):
     if request.method == 'POST':
         user = request.user
@@ -143,5 +150,5 @@ def like(request):
             print("Adding User")
             newspost.users_liked.add(user)
             newspost.save()
-    ctx = {'likes_count':newspost.total_likes}
+    ctx = {'likes_count': newspost.total_likes}
     return HttpResponse(json.dumps(ctx), content_type='application/json')

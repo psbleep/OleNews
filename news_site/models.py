@@ -14,15 +14,19 @@ class Author(models.Model):
     def __str__(self):
         return "{0}, {1}".format(self.last_name, self.first_name)
 
+
 class NewsPost(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    file_upload = models.FileField(upload_to="news_site/templates/news_atricles/"
-                                   .format(author.get_attname()),null=True)
-    users_liked = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_liked')
+    file_upload = models.FileField(
+        upload_to="news_site/templates/news_atricles/".format(
+            author.get_attname()), null=True
+    )
+    users_liked = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                         related_name='users_liked')
 
     @property
     def total_likes(self):
@@ -51,6 +55,7 @@ class NewsPost(models.Model):
         def __unicode__(self):
             return self.title
 
+
 class Comment(models.Model):
     post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
                              null=True, blank=True, related_name='comments')
@@ -64,11 +69,14 @@ class Comment(models.Model):
     def approve(self):
         self.approved = True
         self.save()
+
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
+
     def __str__(self):
         return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
-                                                                self.post,
-                                                                self.approved)
+                                                               self.post,
+                                                               self.approved)
+
     class Meta:
         ordering = ('created',)
