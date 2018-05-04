@@ -1,10 +1,11 @@
 {% extends "index.html" %}
-{% load staticfiles %}
 {% block content %}
 
-{% include "includes/navbar_main.html" %}
-<div id="wrapper">
+<div class = "nav-wrapper">
+  {% include "includes/navbar_main.html" %}
+</div>
 
+<div class="body">
 {% if page == 'home' %}
     {% include "includes/home_landing.html" %}
 {% elif page == 'authors' %}
@@ -18,6 +19,7 @@
 {% elif page == 'author_articles_news_articles' %}
     {% include "includes/author_articles_news_articles.html" %}
 {% endif %}
+
 </div>
 
 

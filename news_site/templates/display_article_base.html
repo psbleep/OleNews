@@ -1,54 +1,13 @@
 {% extends "news_post_base.html" %}
 {% block content%}
-
-<head>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content= "{{ article.content }}" >
-  <meta name="title" content= "{{ article.title }}" >
-  <title>{{ article.title }}</title>
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom styles for this template -->
-  <link href="css/blog-post.css" rel="stylesheet">
-  <script type="application/ld+json">
-  {
-    "@context":"http://schema.org",
-    "@type":"NewsArticle",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "{{ request.get_full_path }}"
-    },
-    "headline": "{{ article.title }}",
-    "image": [
-      "https://www.olemundo.com/img/logo"
-    ],
-    "datePublished": "{{ article.created_on }}",
-    "dateModified": "{{ article.created_on }}",
-    "name": "{{ article.title }}",
-    "author": {
-      "@type": "Person",
-      "name": "{{ article.author }}"
-    },
-    "publisher": {
-     "@type": "Organization",
-     "name": "Ole Mundo",
-     "logo": {
-       "@type": "ImageObject",
-       "url": "https://www.olemundo.com/img/logo"
-      }
-    },
-    "description": "{{ article.content }}"
-  }
-  </script>
-</head>
-{% include "includes/navbar_main.html" %}
-
-
+<div class = "nav-wrapper">
+  {% include "includes/navbar_main.html" %}
+</div>
+<div class="content">
 {% with template_name=file_name|stringformat:"s" %}
 {% include ""|add:template_name %}
 {% endwith %}
+</div>
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
     {% include "includes/like_button.html" %}
