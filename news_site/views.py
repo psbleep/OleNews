@@ -92,6 +92,9 @@ def user_profile(request, user_name):
     else:
         return redirect('/user/{}'.format(request.user.username))
 
+@login_required
+def user_settings(request):
+    return render(request, 'user_pages/user_settings.html')
 
 def sign_up(request):
     if request.method == 'POST':
