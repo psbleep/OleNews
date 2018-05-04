@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.template.defaultfilters import slugify
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # from forum.models import Thread
 
 
@@ -77,6 +79,22 @@ class Comment(models.Model):
         return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
                                                                self.post,
                                                                self.approved)
-
     class Meta:
         ordering = ('created',)
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE,
+                                related_name='profile')
+    user_bio = models.TextField(default="Fill out your Bio")
+
+    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+    def creat_user_profile(sender, instance, created, **kwargs):
+        if created:
+            profile = Profile(user=instance)
+            profile.save()
+            
+    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+    def save_user_profile(sender, instance, **kwargs):
+        profile = Profile(user=instance)
+        profile.save()

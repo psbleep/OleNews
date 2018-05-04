@@ -1,5 +1,5 @@
 from .models import NewsPost, Author
-from .forms import SignupForm, LoginForm, CommentForm
+from .forms import SignupForm, LoginForm, CommentForm, UserChange,UserChangeProfile
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -86,15 +86,24 @@ def user_profile(request, user_name):
     if(user_name == request.user.username):
         liked_articles = request.user.users_liked.all()
         total_likes = len(liked_articles)
+        profile = request.user.profile
+
         return render(request, 'user_profile.html',
                       {'likes': total_likes,
-                       'liked_articles': liked_articles})
+                       'liked_articles': liked_articles,
+                       'bio': profile.user_bio,
+                       })
     else:
         return redirect('/user/{}'.format(request.user.username))
 
 @login_required
 def user_settings(request):
-    return render(request, 'user_pages/user_settings.html')
+    user_change_form = UserChange
+    user_change_profile_form = UserChangeProfile
+    return render(request, 'user_pages/user_settings.html', {
+        'form':user_change_form,
+        'profile_form': user_change_profile_form,
+        })
 
 def sign_up(request):
     if request.method == 'POST':
