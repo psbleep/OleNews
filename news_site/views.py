@@ -1,4 +1,4 @@
-from .models import NewsPost, Author
+from .models import NewsPost, Author,Profile
 from .forms import SignupForm, LoginForm, CommentForm, UserChange,UserChangeProfile
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -36,7 +36,7 @@ def author_article_show(request, author_id, article):
     author = Author.objects.get(id=author_id)
     main_article = NewsPost.objects.get(slug=article)
     like_count = main_article.users_liked.distinct().count()
-    if request.method == "POST":
+    if request.method == "POST" and request.user.is_authenticated:
         form = CommentForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
@@ -48,6 +48,17 @@ def author_article_show(request, author_id, article):
             post.save()
     else:
         form = CommentForm()
+        error_not_logged_in = 'true'
+        return render(request, 'display_article_base.html',
+                      {'page': 'author_articles_news_articles',
+                       'article': main_article,
+                       'author': author,
+                       'file_name': main_article.file_upload,
+                       'form': form,
+                       'likes': like_count,
+                       'post': article,
+                       'error': error_not_logged_in,}
+                      )
     return render(request, 'display_article_base.html',
                   {'page': 'author_articles_news_articles',
                    'article': main_article,
@@ -87,7 +98,6 @@ def user_profile(request, user_name):
         liked_articles = request.user.users_liked.all()
         total_likes = len(liked_articles)
         profile = request.user.profile
-
         return render(request, 'user_profile.html',
                       {'likes': total_likes,
                        'liked_articles': liked_articles,
@@ -98,13 +108,25 @@ def user_profile(request, user_name):
 
 @login_required
 def user_settings(request):
-    user_change_form = UserChange
-    user_change_profile_form = UserChangeProfile
-    return render(request, 'user_pages/user_settings.html', {
-        'form':user_change_form,
-        'profile_form': user_change_profile_form,
-        })
-
+    if request.method == 'POST':
+        user_change_form = UserChange(request.POST,
+                                      instance=request.user)
+        user_change_profile_form = UserChangeProfile(request.POST,
+                                                     instance=request.user.profile)
+        if user_change_form.is_valid() and user_change_profile_form.is_valid():
+            user_change_form.save()
+            user_change_profile_form.save()
+            return render(request, 'user_pages/user_settings.html', {
+                'form':user_change_form,
+                'profile_form': user_change_profile_form,
+                })
+    else:
+        user_change_form = UserChange(instance=request.user)
+        user_change_profile_form = UserChangeProfile(instance=request.user.profile)
+        return render(request, 'user_pages/user_settings.html', {
+            'form':user_change_form,
+            'profile_form': user_change_profile_form,
+            })
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -122,7 +144,7 @@ def sign_up(request):
             if user is not None:
                 user.save()
                 login(request, user)
-                return HttpResponseRedirect('user/', status=201)
+                return render(request, 'home.html',   {'page': 'home'},status=201)
             else:
                 return render(request, 'registration/sign_up.html',
                               {'form': form}, status=404)

@@ -24,13 +24,14 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ('content',)
 
-class UserChange(UserChangeForm):
+class UserChange(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            'email',
+            'username',
             'first_name',
-            'last_name'
+            'last_name',
+            'email',
         )
 class UserChangeProfile(forms.ModelForm):
     class Meta:

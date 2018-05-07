@@ -89,12 +89,12 @@ class Profile(models.Model):
     user_bio = models.TextField(default="Fill out your Bio")
 
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-    def creat_user_profile(sender, instance, created, **kwargs):
+    def create_user_profile(sender, instance, created, **kwargs):
+        print()
         if created:
             profile = Profile(user=instance)
-            profile.save()
-            
+
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def save_user_profile(sender, instance, **kwargs):
-        profile = Profile(user=instance)
-        profile.save()
+        print('saving-------------------------------')
+        instance.profile.save()

@@ -7,16 +7,18 @@
 
 <form method="post">
   {% csrf_token %}
-  {% for field in form %}
+  {% for field in form.visible_fields %}
   <p>
-    {{ field.label_tag }}<br>
+    {{ field.label }}<br>
     {{ field }}
   </p>
   {% endfor %}
-{% for field in profile_form %}
+{% for field in profile_form.visible_fields %}
 <p>
-  {{ field.label_tag }}<br>
+  {{ field.label }}<br>
   {{ field }}
 </p>
 {% endfor %}
+    <button type="submit">Edit</button>
+    <br></br>
 {% endblock %}
