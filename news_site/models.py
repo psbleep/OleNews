@@ -62,7 +62,8 @@ class Comment(models.Model):
     post = models.ForeignKey(NewsPost, on_delete=models.CASCADE,
                              null=True, blank=True, related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE,
+                             related_name='user_comments')
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

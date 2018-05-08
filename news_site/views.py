@@ -1,4 +1,4 @@
-from .models import NewsPost, Author,Profile
+from .models import NewsPost, Author,Profile, Comment
 from .forms import SignupForm, LoginForm, CommentForm, UserChange,UserChangeProfile
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -92,19 +92,19 @@ def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
 
-@login_required
+
 def user_profile(request, user_name):
-    if(user_name == request.user.username):
-        liked_articles = request.user.users_liked.all()
-        total_likes = len(liked_articles)
-        profile = request.user.profile
-        return render(request, 'user_profile.html',
-                      {'likes': total_likes,
-                       'liked_articles': liked_articles,
-                       'bio': profile.user_bio,
-                       })
-    else:
-        return redirect('/user/{}'.format(request.user.username))
+    user = User.objects.get(username=user_name)
+    liked_articles = user.users_liked.all()
+    total_comments = user.user_comments.distinct().count()
+    total_likes = len(liked_articles)
+    profile = user.profile
+    return render(request, 'user_profile.html',
+                  {'user_name':user_name,
+                   'likes': total_likes,
+                   'liked_articles': liked_articles,
+                   'bio': profile.user_bio,
+                   'comment_total': total_comments})
 
 @login_required
 def user_settings(request):

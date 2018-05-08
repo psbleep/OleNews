@@ -12,9 +12,13 @@ body{
 }
 #navbar{
   background-color: #3a9e34;
-
 }
-
+#id_content{
+  height:5em;
+}
+.comment_form > label{
+vertical-align: top;
+}
 #main_img{
   background-image: url("/static/img/home/temp_bg_ole.jpg");
   background-size: 100% ;

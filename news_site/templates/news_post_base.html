@@ -9,11 +9,29 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 <meta name="description" content= "{{ article.content }}" >
 <meta name="title" content= "{{ article.title }}" >
+<!--OpenGraph Meta Data -->
+<meta property="og:url" content="{{ request.path }}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content= "{{ article.title }}" />
+<meta property="og:description" content="{{ article.content }}" />
+<meta property="og:image" content="{% static 'img/Ole/logo.jpg' %}" />
+<meta property="og:site_name" content="Ole Mundo" />
+
 <title>{{ article.title }}</title>
 <!-- Bootstrap core CSS -->
 <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
 <link href="css/blog-post.css" rel="stylesheet">
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- Schema.org Markup Data -->
 <script type="application/ld+json">
   {
     "@context":"http://schema.org",
@@ -24,7 +42,7 @@
     },
     "headline": "{{ article.title }}",
     "image": [
-      "https://www.olemundo.com/img/logo"
+      "{% static 'img/Ole/logo.jpg' %}"
     ],
     "datePublished": "{{ article.created_on }}",
     "dateModified": "{{ article.created_on }}",
@@ -38,7 +56,7 @@
      "name": "Ole Mundo",
      "logo": {
        "@type": "ImageObject",
-       "url": "https://www.olemundo.com/img/logo"
+       "url": "{% static 'img/Ole/logo.jpg' %}"
       }
     },
     "description": "{{ article.content }}"
