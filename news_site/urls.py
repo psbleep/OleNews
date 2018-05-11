@@ -4,12 +4,13 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name="home"),
-    path('authors', views.author_general, name="author_general"),
-    path('authors/<int:author_id>', views.author_about, name="author_info"),
-    path('authors/<int:author_id>/<str:article>', views.author_article_show, name="author_article_show"),
-    path('articles/', views.articles_main, name="articles_main"),
-    path('articles/<int:author_id>', views.author_articles,
+    path('authors/', views.AuthorsListView.as_view(), name="authors_list"),
+    path('authors/<int:pk>/', views.AuthorDetailView.as_view(), name="author"),
+    path('authors/<int:pk>/articles/', views.AuthorArticlesView.as_view(),
          name="author_articles"),
+    path('articles/', views.ArticlesListView.as_view(), name="articles_list"),
+    path('articles/<int:pk>/', views.ArticleDetailView.as_view(),
+         name="article"),
     path('login/', views.log_in, name="login"),
     path('user/settings', views.user_settings, name='like'),
     path('user/<str:user_name>', views.user_profile, name="user_page"),

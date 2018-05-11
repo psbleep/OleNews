@@ -1,35 +1,40 @@
-from .models import NewsPost, Author,Profile, Comment
-from .forms import SignupForm, LoginForm, CommentForm, UserChange,UserChangeProfile
+from .models import NewsPost, Author
+from .forms import (
+    SignupForm, LoginForm, CommentForm, UserChange, UserChangeProfile
+)
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.views import generic
 import json
 
 
-def author_articles(request, author_id):
-    author = Author.objects.get(id=author_id)
-    articles = NewsPost.objects.filter(author=author)
-    return render(request, 'home.html', {'page': 'author_articles',
-                                         'titles': articles})
+class AuthorsListView(generic.ListView):
+    model = Author
+    template_name = "authors_list.html"
 
 
-def author_about(request, author_id):
-    author = Author.objects.get(id=author_id)
-    articles = NewsPost.objects.filter(author=author)
-    print(articles)
-    return render(request, 'home.html', {'page': 'author_about',
-                                         'author': author_id,
-                                         'articles': articles})
+class AuthorDetailView(generic.DetailView):
+    model = Author
+    template_name = "author.html"
 
 
-def articles_main(request):
-    return render(request, 'home.html')  # Will need to make Articles.html
-    '''
-    Atricles will need to display articles based on user like or new.
-    '''
+class AuthorArticlesView(generic.DetailView):
+    model = Author
+    template_name = "author_articles.html"
+
+
+class ArticlesListView(generic.ListView):
+    model = NewsPost
+    template_name = "articles_list.html"
+
+
+class ArticleDetailView(generic.DetailView):
+    model = NewsPost
+    template_name = "article.html"
 
 
 def author_article_show(request, author_id, article):
@@ -57,7 +62,7 @@ def author_article_show(request, author_id, article):
                        'form': form,
                        'likes': like_count,
                        'post': article,
-                       'error': error_not_logged_in,}
+                       'error': error_not_logged_in}
                       )
     return render(request, 'display_article_base.html',
                   {'page': 'author_articles_news_articles',
@@ -92,7 +97,6 @@ def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
 
-
 def user_profile(request, user_name):
     user = User.objects.get(username=user_name)
     liked_articles = user.users_liked.all()
@@ -100,33 +104,37 @@ def user_profile(request, user_name):
     total_likes = len(liked_articles)
     profile = user.profile
     return render(request, 'user_profile.html',
-                  {'user_name':user_name,
+                  {'user_name': user_name,
                    'likes': total_likes,
                    'liked_articles': liked_articles,
                    'bio': profile.user_bio,
                    'comment_total': total_comments})
+
 
 @login_required
 def user_settings(request):
     if request.method == 'POST':
         user_change_form = UserChange(request.POST,
                                       instance=request.user)
-        user_change_profile_form = UserChangeProfile(request.POST,
-                                                     instance=request.user.profile)
+        user_change_profile_form = UserChangeProfile(
+            request.POST, instance=request.user.profile)
         if user_change_form.is_valid() and user_change_profile_form.is_valid():
             user_change_form.save()
             user_change_profile_form.save()
             return render(request, 'user_pages/user_settings.html', {
-                'form':user_change_form,
+                'form': user_change_form,
                 'profile_form': user_change_profile_form,
                 })
     else:
         user_change_form = UserChange(instance=request.user)
-        user_change_profile_form = UserChangeProfile(instance=request.user.profile)
+        user_change_profile_form = UserChangeProfile(
+            instance=request.user.profile)
         return render(request, 'user_pages/user_settings.html', {
-            'form':user_change_form,
+            'form': user_change_form,
             'profile_form': user_change_profile_form,
             })
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -144,7 +152,8 @@ def sign_up(request):
             if user is not None:
                 user.save()
                 login(request, user)
-                return render(request, 'home.html',   {'page': 'home'},status=201)
+                return render(request, 'home.html',
+                              {'page': 'home'}, status=201)
             else:
                 return render(request, 'registration/sign_up.html',
                               {'form': form}, status=404)
