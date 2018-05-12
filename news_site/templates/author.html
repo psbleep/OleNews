@@ -1,5 +1,17 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% include "includes/navbar_main.html" %}
+<div class="container-fluid">
+
+
 {% if author %}
   {{ author }}
 {% else %}
   No author found!
 {% endif %}
+
+</div>
+
+{% endblock %}

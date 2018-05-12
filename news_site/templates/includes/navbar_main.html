@@ -38,9 +38,9 @@
         role="button" aria-haspopup="true" aria-expanded="false">{{ request.user }}
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
-         <li><a href="/user/{{request.user}}">Profile</a></li>
-         <li><a href="/user/settings">Settings</a></li>
-         <li><a href="/logout">log out</a></li>
+          <li><a href="{% url 'user_profile' request.user.id %}">Profile</a></li>
+          <li><a href="{% url 'user_profile_settings' request.user.id %}">Settings</a></li>
+          <li><a href="{% url 'logout' %}">log out</a></li>
        </ul>
         {% else %}
         <li><a href="/login">login<span class="sr-only">(current)</span></a></li>
