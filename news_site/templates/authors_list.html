@@ -4,13 +4,12 @@
 
 {% include "includes/navbar_main.html" %}
 <div class="container-fluid">
-{% if authors %}
-  {% for author in authors %}
-    {{ author }}
+  <h1>Authors</h1>
+  <ul>
+  {% for author in object_list %}
+  <li><a href="{% url 'author' author.id %}">{{ author.user.username }}</a></li>
   {% endfor %}
-{% else %}
-  No authors here!
-{% endif %}
+  </ul>
 </div>
 
 {% endblock %}

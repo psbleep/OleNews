@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% include "includes/navbar_main.html" %}
+<div class="container-fluid">
+
+
+	<h1>{{ object.title }}</h1><br>
+  <b>by <a href="{% url 'author' object.user.id %}">{{ object.user.username }}</a>
+{% if object.user.first_name %}
+	({{ object.user.first_name }} {{ object.user.profile.last_name }})
+	{% endif %}</b><br><br>
+<p>{{ object.content }}</p>
+
+</div>
+{% endblock %}

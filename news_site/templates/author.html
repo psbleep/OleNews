@@ -6,8 +6,14 @@
 <div class="container-fluid">
 
 
-{% if author %}
-  {{ author }}
+{% if object %}
+  <h1>{{ object.user.username }}</h1>
+  <p>The author of many fine articles:</p>
+  <ul>
+  {% for article in object.articles %}
+  <li><a href="{% url 'article' article.id %}">{{ article.title }}</a></li>
+  {% endfor %}
+  </ul>
 {% else %}
   No author found!
 {% endif %}

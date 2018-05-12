@@ -15,10 +15,20 @@ class AuthorsListView(generic.ListView):
     model = Profile
     template_name = "authors_list.html"
 
+    def get_queryset(self):
+        return Profile.objects.filter(user__is_staff=True)
+
 
 class AuthorDetailView(generic.DetailView):
     model = Profile
     template_name = "author.html"
+
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        if not obj.user.is_staff:
+            return None
+        obj.articles = NewsPost.objects.filter(user=obj.user)
+        return obj
 
 
 class AuthorArticlesView(generic.DetailView):

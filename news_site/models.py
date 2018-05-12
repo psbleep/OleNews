@@ -11,6 +11,9 @@ class Profile(models.Model):
                                 related_name='profile')
     user_bio = models.TextField(default="Fill out your Bio")
 
+    def __str__(self):
+        return self.user.username
+
     def like(self, news_post_id):
         try:
             news_post = NewsPost.objects.get(pk=news_post_id)
@@ -33,8 +36,8 @@ class NewsPost(models.Model):
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    users_liked = models.ManyToManyField(Profile,
-                                         related_name='news_posts_liked')
+    users_liked = models.ManyToManyField(
+        Profile, related_name='news_posts_liked', blank=True)
 
     @property
     def likes(self):
