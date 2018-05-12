@@ -1,4 +1,4 @@
-from .models import NewsPost, Author, Profile
+from .models import NewsPost, Profile
 from .forms import CommentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,17 +12,17 @@ def home(request):
 
 
 class AuthorsListView(generic.ListView):
-    model = Author
+    model = Profile
     template_name = "authors_list.html"
 
 
 class AuthorDetailView(generic.DetailView):
-    model = Author
+    model = Profile
     template_name = "author.html"
 
 
 class AuthorArticlesView(generic.DetailView):
-    model = Author
+    model = Profile
     template_name = "author_articles.html"
 
 
@@ -82,6 +82,5 @@ class LikeArticleView(generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if request.user not in self.object.users_liked:
-            self.object.users_liked.add(self.request.user)
+        self.request.user.profile.like(self.object)
         return reverse('articles', kwargs={'pk': self.object.id})

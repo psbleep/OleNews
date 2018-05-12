@@ -3,50 +3,47 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-# from forum.models import Thread
 
 
-class Author(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE)
+                                on_delete=models.CASCADE,
+                                related_name='profile')
+    user_bio = models.TextField(default="Fill out your Bio")
 
-    def __getattr__(self, attribute):
-        return getattr(self.user, attribute)
+    def like(self, news_post_id):
+        try:
+            news_post = NewsPost.objects.get(pk=news_post_id)
+        except NewsPost.DoesNotExist:
+            return
+        if news_post.user == self.user:
+            return
+        self.news_posts_liked.add(news_post)
 
-    def __str__(self):
-        return "{0}, {1}".format(self.last_name, self.first_name)
+    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
 
 
 class NewsPost(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    file_upload = models.FileField(
-        upload_to="news_site/templates/news_atricles/".format(
-            author.get_attname()), null=True
-    )
-    users_liked = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                         related_name='users_liked')
+    users_liked = models.ManyToManyField(Profile,
+                                         related_name='news_posts_liked')
 
     @property
-    def total_likes(self):
-        '''
-        Return total_likes
-        '''
+    def likes(self):
         return self.users_liked.count()
-
-    def get_author_id(self):
-        return self.author.id
-
-    def get_absolute_url(self):
-        return '/news_post_detail/{}/'.format(self.slug)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        super(NewsPost, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -70,8 +67,9 @@ class Comment(models.Model):
     approved = models.BooleanField(default=False)
 
     def approve(self):
-        self.approved = True
-        self.save()
+        if not self.approved:
+            self.approved = True
+            self.save()
 
     def __getattr__(self, attribute):
         return getattr(self.user, attribute)
@@ -83,16 +81,3 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ('created',)
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE,
-                                related_name='profile')
-    user_bio = models.TextField(default="Fill out your Bio")
-
-    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-    def create_user_profile(sender, instance, created, **kwargs):
-        print()
-        if created:
-            Profile.objects.create(user=instance)
