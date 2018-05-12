@@ -80,8 +80,10 @@ class Comment(models.Model):
         return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
                                                                self.post,
                                                                self.approved)
+
     class Meta:
         ordering = ('created',)
+
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -93,9 +95,4 @@ class Profile(models.Model):
     def create_user_profile(sender, instance, created, **kwargs):
         print()
         if created:
-            profile = Profile(user=instance)
-
-    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-    def save_user_profile(sender, instance, **kwargs):
-        print('saving-------------------------------')
-        instance.profile.save()
+            Profile.objects.create(user=instance)
