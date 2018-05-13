@@ -34,20 +34,22 @@ class ProfileTestCase(TestCase):
         user = create_new_test_user()
         user2 = create_new_test_user(username='test2')
         news_post = create_test_news_post(user=user)
-        user2.profile.like(news_post.id)
+        user2.profile.like(news_post)
         # Must be a better way to test queryset results
         self.assertEqual(user2.profile.news_posts_liked.count(), 1)
         self.assertEqual(user2.profile.news_posts_liked.all()[0], news_post)
 
     def test_like_news_post_that_does_not_exist(self):
         user = create_new_test_user()
-        user.profile.like(12345)
+        with self.assertRaises(AttributeError) as e:
+            user.profile.like(None)
+        self.assertTrue(e)
         self.assertEqual(user.profile.news_posts_liked.count(), 0)
 
     def test_like_your_own_news_post(self):
         user = create_new_test_user()
         news_post = create_test_news_post(user=user)
-        user.profile.like(news_post.id)
+        user.profile.like(news_post)
         self.assertEqual(user.profile.news_posts_liked.count(), 0)
 
     def test_like_same_post_more_than_once(self):
@@ -55,7 +57,7 @@ class ProfileTestCase(TestCase):
         user2 = create_new_test_user(username='test2')
         news_post = create_test_news_post(user=user)
         user2.profile.news_posts_liked.add(news_post)
-        user2.profile.like(news_post.id)
+        user2.profile.like(news_post)
         self.assertEqual(user2.profile.news_posts_liked.count(), 1)
 
 
