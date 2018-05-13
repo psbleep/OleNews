@@ -14,14 +14,13 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    def like(self, news_post_id):
-        try:
-            news_post = NewsPost.objects.get(pk=news_post_id)
-        except NewsPost.DoesNotExist:
-            return
+    def like(self, news_post):
         if news_post.user == self.user:
             return
-        self.news_posts_liked.add(news_post)
+        try:
+            self.news_posts_liked.add(news_post)
+        except NewsPost.DoesNotExist:
+            pass
 
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def create_user_profile(sender, instance, created, **kwargs):

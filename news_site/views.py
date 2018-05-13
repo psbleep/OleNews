@@ -3,6 +3,7 @@ from .forms import CommentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 
@@ -41,9 +42,17 @@ class ArticlesListView(generic.ListView):
     template_name = "articles_list.html"
 
 
-class ArticleDetailView(generic.DetailView):
+class ArticleDetailView(LoginRequiredMixin, generic.DetailView):
     model = NewsPost
     template_name = "article.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post_pk = self.object.id
+        user_pk = self.request.user.id
+        form = CommentForm(post_pk=post_pk, user_pk=user_pk)
+        context.update({'form': form})
+        return context
 
 
 class CreateCommentView(LoginRequiredMixin, generic.CreateView):
@@ -57,7 +66,7 @@ class CreateCommentView(LoginRequiredMixin, generic.CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse('articles', kwargs={'pk': self.object.post.id})
+        return reverse('article', kwargs={'pk': self.object.post.id})
 
 
 class UserProfileView(generic.DetailView):
@@ -93,4 +102,5 @@ class LikeArticleView(generic.DetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.request.user.profile.like(self.object)
-        return reverse('articles', kwargs={'pk': self.object.id})
+        return HttpResponseRedirect(
+            reverse('article', kwargs={'pk': self.object.id}))

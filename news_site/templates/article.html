@@ -12,6 +12,27 @@
 	({{ object.user.first_name }} {{ object.user.profile.last_name }})
 	{% endif %}</b><br><br>
 <p>{{ object.content }}</p>
+<p>{{ object.likes }} likes</p>
+
+{% if object.comments %}
+<b>Comments</b>
+<ul>
+	{% for comment in object.comments.all %}
+		{% if comment.approved %}
+			<li>{{ comment.content }}</li>
+		{% endif %}
+
+{% endfor %}
+</ul>
+{% endif %}
+
+<form method="post" action="{% url 'comment_article' object.id %}">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<button type="submit">Comment</button>
+</form>
+
+<p><a href="{% url 'like_article' object.id %}"><h1>LIKE</h1></a></p>
 
 </div>
 {% endblock %}
