@@ -1,0 +1,7 @@
+{% if author.articles_set %}
+  {% for article in author.articles_set %}
+    {{ article }}
+  {% endfor %}
+{% else %}
+  This author has no articles!
+{% endif %}
