@@ -1,5 +1,6 @@
 from news_site.models import NewsPost, Profile, Comment
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 
@@ -7,6 +8,14 @@ def create_new_test_user(username='new_user',
                          email='new_user@host.com',
                          password='new_user_password'):
     return User.objects.create_user(username, email, password)
+
+
+def create_new_test_author(user=None):
+    if user is None:
+        user = create_new_test_user()
+    user.is_staff = True
+    user.save()
+    return user
 
 
 def create_test_news_post(title='Hello World', slug='hello-world',
@@ -103,3 +112,77 @@ class CommentTestCase(TestCase):
         comment.approved = True
         comment.save()
         comment.approve()
+
+
+class AuthorsListViewTests(TestCase):
+
+    def test_authors_list_no_authors(self):
+        response = self.client.get(reverse('authors_list'))
+        self.assertContains(response, 'No authors here!')
+
+    def test_authors_list_with_authors(self):
+        author = create_new_test_author()
+        author2 = create_new_test_author(
+            create_new_test_user(username='test2'))
+        response = self.client.get(reverse('authors_list'))
+        self.assertContains(response, author.username)
+        self.assertContains(response, author2.username)
+
+    def test_authors_list_non_author_users_do_not_get_listed(self):
+        non_author = create_new_test_user()
+        author = create_new_test_author(
+            create_new_test_user(username='test_author'))
+        response = self.client.get(reverse('authors_list'))
+        self.assertContains(response, author.username)
+        self.assertNotContains(response, non_author.username)
+
+
+class AuthorDeatilViewTests(TestCase):
+
+    def test_author_view_user_exists_and_is_author(self):
+        author = create_new_test_author()
+        response = self.client.get(reverse('author', kwargs={'pk': author.id}))
+        self.assertContains(response, author.username)
+
+    def test_author_view_user_does_not_exist(self):
+        response = self.client.get(reverse('author', kwargs={'pk': 123456}))
+        self.assertEquals(response.status_code, 404)
+
+    def test_author_view_user_exists_but_is_not_author(self):
+        non_author = create_new_test_user()
+        response = self.client.get(
+            reverse('author', kwargs={'pk': non_author.id}))
+        self.assertEquals(response.status_code, 404)
+
+
+class AuthorArticlesViewTests(TestCase):
+
+    def test_author_articles_without_articles(self):
+        author = create_new_test_author()
+        response = self.client.get(
+            reverse('author_articles', kwargs={'pk': author.id}))
+        self.assertContains(response, 'no articles')
+
+    def test_author_articles_with_articles(self):
+        author = create_new_test_author()
+        article = create_test_news_post(user=author)
+        article2 = create_test_news_post(user=author, slug='article2')
+        response = self.client.get(
+            reverse('author_articles', kwargs={'pk': author.id}))
+        self.assertContains(response, article.title)
+        self.assertContains(response, article2.title)
+
+
+class ArticlesListViewTests(TestCase):
+
+    def test_articles_list_with_no_articles(self):
+        response = self.client.get(reverse('articles_list'))
+        self.assertContains(response, 'No articles')
+
+    def test_articles_list_with_articles(self):
+        author = create_new_test_author()
+        article = create_test_news_post(user=author)
+        article2 = create_test_news_post(user=author, slug='article2')
+        response = self.client.get(reverse('articles_list'))
+        self.assertContains(response, article.title)
+        self.assertContains(response, article2.title)

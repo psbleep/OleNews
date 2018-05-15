@@ -1,7 +1,21 @@
-{% if author.articles_set %}
-  {% for article in author.articles_set %}
-    {{ article }}
+{% extends "index.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% include "includes/navbar_main.html" %}
+<div class="container-fluid">
+
+<h1>Articles</h1>
+
+{% if object.articles %}
+  <ul>
+  {% for article in object.articles %}
+    <li>{{ article.title }}</li>
   {% endfor %}
+  </ul>
 {% else %}
   This author has no articles!
 {% endif %}
+
+</div>
+{% endblock %}
