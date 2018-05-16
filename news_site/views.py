@@ -3,7 +3,7 @@ from .forms import CommentForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.views import generic
 
@@ -27,7 +27,7 @@ class AuthorDetailView(generic.DetailView):
     def get_object(self, **kwargs):
         obj = super().get_object(**kwargs)
         if not obj.user.is_staff:
-            return None
+            raise Http404
         obj.articles = NewsPost.objects.filter(user=obj.user)
         return obj
 
@@ -35,6 +35,11 @@ class AuthorDetailView(generic.DetailView):
 class AuthorArticlesView(generic.DetailView):
     model = Profile
     template_name = "author_articles.html"
+
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        obj.articles = obj.user.newspost_set.all()
+        return obj
 
 
 class ArticlesListView(generic.ListView):
