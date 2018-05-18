@@ -17,7 +17,7 @@ urlpatterns = [
          name='comment_article'),
     path('users/<int:pk>/', views.UserProfileView.as_view(),
          name="user_profile"),
-    path('users/<int:pk>/settings/', views.UserProfileSettingsView.as_view(),
+    path('users/<int:pk>/settings/', views.user_settings,
          name="user_profile_settings"),
     path('login/', auth_views.login, name="login"),
     path('signup/', views.UserSignupView.as_view(), name="sign_up"),

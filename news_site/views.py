@@ -1,8 +1,9 @@
 from .models import NewsPost, Profile
-from .forms import CommentForm
+from .forms import CommentForm, UserChange, UserChangeProfile,SignupForm
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.views import generic
@@ -79,22 +80,33 @@ class UserProfileView(generic.DetailView):
     template_name = "user_profile.html"
 
 
-class UserProfileSettingsView(LoginRequiredMixin, generic.UpdateView):
-    model = Profile
-    fields = ['user_bio']
 
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.id != kwargs.get('pk'):
-            return reverse('home')
-        else:
-            return super().dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('user_profile', kwargs={'pk': self.object.id})
+def user_settings(request, pk):
+    if request.method == 'POST':
+        print("Got Post")
+        user_change_form = UserChange(request.POST,
+                                      instance=request.user)
+        user_change_profile_form = UserChangeProfile(request.POST,
+                                                     instance=request.user.profile)
+        if user_change_form.is_valid() and user_change_profile_form.is_valid():
+            print("was Valid")
+            user_change_form.save()
+            user_change_profile_form.save()
+            return render(request, 'user_pages/user_settings.html', {
+                'form':user_change_form,
+                'profile_form': user_change_profile_form,
+                })
+    else:
+        user_change_form = UserChange(instance=request.user)
+        user_change_profile_form = UserChangeProfile(instance=request.user.profile)
+        return render(request, 'user_pages/user_settings.html', {
+            'form':user_change_form,
+            'form2': user_change_profile_form,
+            })
 
 
 class UserSignupView(generic.CreateView):
-    form_class = UserCreationForm
+    form_class = SignupForm#UserCreationForm
     template_name = 'registration/sign_up.html'
 
     def get_success_url(self):

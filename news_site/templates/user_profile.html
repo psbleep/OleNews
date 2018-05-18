@@ -14,6 +14,7 @@
       <img style="max-width:200px" class="img-thumbnail " src="{% static "img/Temp_profile.jpeg" %}">
       <h3>{{ profile.user.name }} Profile</h3>
       <ul>
+        <li><b>Name: {{ profile.user.first_name }}</b></li>
         <li><b>Joined: {{ profile.user.date_joined|date:"F-Y" }}</b></li>
         <li><b>Likes: {{ profile.likes }}</b></li>
         <li><b>Comments: {{ profile.comment_total }}</b></li>

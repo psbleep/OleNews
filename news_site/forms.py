@@ -54,4 +54,4 @@ class UserChangeProfile(forms.ModelForm):
         model = Profile
         fields = (
             'user_bio',
-        )
+            )
