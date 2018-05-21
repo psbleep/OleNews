@@ -1,26 +1,60 @@
 {% extends "index.html" %}
 {% load staticfiles %}
 {% block content %}
-
 {% include "includes/navbar_main.html" %}
-<h1>Temp User Settings</h1>
 
-<form method="post">
-  <p>Form</p>
-  {% csrf_token %}
-  {% for field in form.visible_fields %}
-  <p>
-    {{ field.label }}<br>
-    {{ field }}
-  </p>
-  {% endfor %}
-  <p>Form2</p>
-{% for field in form2.visible_fields %}
-<p>
-  {{ field.label }}<br>
-  {{ field }}
-</p>
-{% endfor %}
-    <button type="submit">Edit</button>
-    <br></br>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h1>Settings</h1>
+    </div>
+    <div class="col-sm-4" stlye="float:right;">
+      <div class="row">
+        <div class="col">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+    </div>
+  </br>
+      <form method="post">
+        <div class="col-sm-4">
+        {% csrf_token %}
+        <h4>Account</h4>
+          <ul class="formList">
+            <li id="username" class="contact"><p>User Name:</p>{{ form.username }}</li>
+            <li id="firstName" class="contact"><p>First Name</p>{{ form.first_name }}</li>
+            <li id="lastName" class="contact"><p>Last Name</p>{{ form.last_name }}</li>
+            <li id="lastName" class="contact"><p>Email</p>{{ form.email }}</li>
+            <li id="changePW" class="contact"><p><a href="/change-password/">Change password.</a></p></li>
+          </ul>
+        </div>
+        <div class="col-sm-6">
+          <h4>Content</h4>
+          <ul class="formList">
+            <li id="userBio" class="contact"><p>Bio:</p>{{ form2.user_bio }}</li>
+            <li id="userBio" class="contact" style="display:inline;">Email Notification: {{ form2.email_consent }}</li>
+            <li id="submitButton" class="contact">
+            </li>
+          </ul>
+        </div>
+        <div class = "col-sm-2">
+        </div>
+   </div>
+   <div class="row"
+   <div class = "col-sm-2">
+   </div>
+     <div class = "col-sm-8">
+       <input type="submit" value="Submit">
+     </div>
+   </div>
+      </form>
+</div>
+</div>
+
+
 {% endblock %}

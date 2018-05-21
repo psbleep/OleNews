@@ -4,7 +4,7 @@
 
 {% include "includes/navbar_main.html" %}
 <h1>Temp User Profile Layout</h1>
-{% if profile.user == user %}
+{% if user == user %}
 <a href="{% url 'user_profile_settings' user.id %}">Edit Profile</a>
 {% endif %}
 
@@ -12,21 +12,21 @@
   <div class = "row content">
     <div class="col-sm-3 sidenav">
       <img style="max-width:200px" class="img-thumbnail " src="{% static "img/Temp_profile.jpeg" %}">
-      <h3>{{ profile.user.name }} Profile</h3>
+      <h3>{{ user.username }} Profile</h3>
       <ul>
-        <li><b>Name: {{ profile.user.first_name }}</b></li>
-        <li><b>Joined: {{ profile.user.date_joined|date:"F-Y" }}</b></li>
-        <li><b>Likes: {{ profile.likes }}</b></li>
-        <li><b>Comments: {{ profile.comment_total }}</b></li>
+        <li><b>Name: {{ user.first_name }}</b></li>
+        <li><b>Joined: {{ user.date_joined|date:"F-Y" }}</b></li>
+        <li><b>Likes: {{user.likes }}</b></li>
+        <li><b>Comments: {{ user.comment_total }}</b></li>
       </ul><br>
     </div>
     <div class="col-sm-8">
       <div class="panel panel-default">
           <div class = "panel-heading">
-            <h4>{{  profile.user.username  }} Bio</h4>
+            <h4>{{  user.username  }} Bio</h4>
           </div>
           <div class="panel-body">
-            <p>{{ profile.user_bio }}</p>
+            <p>{{ user.profile.user_bio }}</p>
         </div>
         </div>
         <div class="panel panel-default">

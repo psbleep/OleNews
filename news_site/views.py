@@ -1,13 +1,16 @@
 from .models import NewsPost, Profile
-from .forms import CommentForm, UserChange, UserChangeProfile,SignupForm
+from .forms import CommentForm, UserChange, UserChangeProfile,SignUpForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
-
+from django.views.generic.edit import FormView
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth import authenticate, login
+from django.views.generic import FormView
 
 def home(request):
     return render(request, 'home.html', {'page': 'home'})
@@ -76,26 +79,32 @@ class CreateCommentView(LoginRequiredMixin, generic.CreateView):
 
 
 class UserProfileView(generic.DetailView):
-    model = Profile
+    model = User
     template_name = "user_profile.html"
-
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        print(request.user.profile)
+        if request.user.profile is None:
+            p = Profile(user=request.user)
+            p.save()
+        return self.render_to_response(context)
 
 
 def user_settings(request, pk):
     if request.method == 'POST':
-        print("Got Post")
         user_change_form = UserChange(request.POST,
                                       instance=request.user)
         user_change_profile_form = UserChangeProfile(request.POST,
                                                      instance=request.user.profile)
-        if user_change_form.is_valid() and user_change_profile_form.is_valid():
-            print("was Valid")
+        if user_change_form.is_valid():
             user_change_form.save()
+
+        if user_change_profile_form.is_valid():
             user_change_profile_form.save()
-            return render(request, 'user_pages/user_settings.html', {
-                'form':user_change_form,
-                'profile_form': user_change_profile_form,
-                })
+
+        return HttpResponseRedirect('/users/{}/'.format(request.user.id))
+
     else:
         user_change_form = UserChange(instance=request.user)
         user_change_profile_form = UserChangeProfile(instance=request.user.profile)
@@ -105,13 +114,23 @@ def user_settings(request, pk):
             })
 
 
-class UserSignupView(generic.CreateView):
-    form_class = SignupForm#UserCreationForm
+class UserSignupView(FormView):
+    form_class = SignUpForm
     template_name = 'registration/sign_up.html'
-
     def get_success_url(self):
         return reverse('home')
-
+    def form_valid(self,form):
+        #save the new user first
+        form.save()
+        #get the username and password
+        username = self.request.POST['username']
+        password = self.request.POST['password1']
+        #authenticate user then login
+        user = authenticate(username=username, password=password)
+        p = Profile(user=user)
+        p.save()
+        login(self.request, user)
+        return super(UserSignupView, self).form_valid(form)
 
 class LikeArticleView(generic.DetailView):
     model = NewsPost
@@ -121,3 +140,7 @@ class LikeArticleView(generic.DetailView):
         self.request.user.profile.like(self.object)
         return HttpResponseRedirect(
             reverse('article', kwargs={'pk': self.object.id}))
+
+class PasswordChangeView(PasswordChangeView):
+    template_name='registration/change_password.html'
+    success_url = reverse_lazy('home')

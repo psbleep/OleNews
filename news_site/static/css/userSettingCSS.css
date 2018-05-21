@@ -1,0 +1,16 @@
+ul.formList {
+  list-style-type: none;
+}
+ul li textarea {
+  height: 4em;
+  width:100%;
+}
+#changePW {
+  padding-top: 1em;
+}
+@media only screen and (max-width: 768px) {
+  ul li textarea {
+    height: 4em;
+    width:50%;
+  }
+}

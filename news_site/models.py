@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -10,6 +11,8 @@ class Profile(models.Model):
                                 on_delete=models.CASCADE,
                                 related_name='profile')
     user_bio = models.TextField(default="Fill out your Bio")
+    email_consent = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.user.username
 
@@ -20,17 +23,7 @@ class Profile(models.Model):
             self.news_posts_liked.add(news_post)
         except NewsPost.DoesNotExist:
             pass
-'''
-    @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(
-                user=instance
-                )
-        if not created:
-            profile = Profile.objects.get(user=instance)
-        instance.save()
-'''
+
 class NewsPost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, default=None)
