@@ -12,6 +12,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 
+
 def home(request):
     return render(request, 'home.html', {'page': 'home'})
 
@@ -81,6 +82,7 @@ class CreateCommentView(LoginRequiredMixin, generic.CreateView):
 class UserProfileView(generic.DetailView):
     model = User
     template_name = "user_profile.html"
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
@@ -98,7 +100,6 @@ def user_settings(request, pk):
         user_change_profile_form = UserChangeProfile(request.POST,
                                                      instance=request.user.profile)
         if user_change_form.is_valid():
-            #user_change_profile_form = "img/avitars/{}.jpeg".format(user_change_profile_form.avitar)
             user_change_form.save()
             print(request.user.profile.avitar)
 
@@ -111,7 +112,7 @@ def user_settings(request, pk):
         user_change_form = UserChange(instance=request.user)
         user_change_profile_form = UserChangeProfile(instance=request.user.profile)
         return render(request, 'user_pages/user_settings.html', {
-            'form':user_change_form,
+            'form': user_change_form,
             'form2': user_change_profile_form,
             })
 
@@ -119,19 +120,22 @@ def user_settings(request, pk):
 class UserSignupView(FormView):
     form_class = SignUpForm
     template_name = 'registration/sign_up.html'
+
     def get_success_url(self):
         return reverse('home')
-    def form_valid(self,form):
-        #save the new user first
+
+    def form_valid(self, form):
+        # save the new user first
         form.save()
-        #get the username and password
+        # get the username and password
         username = self.request.POST['username']
         password = self.request.POST['password1']
-        #authenticate user then login
+        # authenticate user then login
         user = authenticate(username=username, password=password)
 
         login(self.request, user)
         return super(UserSignupView, self).form_valid(form)
+
 
 class LikeArticleView(generic.DetailView):
     model = NewsPost
@@ -142,6 +146,7 @@ class LikeArticleView(generic.DetailView):
         return HttpResponseRedirect(
             reverse('article', kwargs={'pk': self.object.id}))
 
+
 class PasswordChangeView(PasswordChangeView):
-    template_name='registration/change_password.html'
+    template_name = 'registration/change_password.html'
     success_url = reverse_lazy('home')

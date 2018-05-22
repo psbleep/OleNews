@@ -6,6 +6,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from news_site.choices import STATUS_CHOICES
 
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
@@ -15,6 +16,7 @@ class Profile(models.Model):
     avitar = models.CharField(choices=STATUS_CHOICES,
                               default="img/avitars/1.jpeg",
                               max_length=200)
+
     def __str__(self):
         return self.user.username
 
@@ -25,10 +27,11 @@ class Profile(models.Model):
             self.news_posts_liked.add(news_post)
         except NewsPost.DoesNotExist:
             pass
+
     @receiver(post_save, sender=User)
     def create_profile(sender,  instance, created, **kwargs):
         if created:
-            #create Profile for user
+            # create Profile for user
             p = Profile(user=instance)
             p.save()
 
