@@ -1,14 +1,15 @@
 from news_site.models import NewsPost, Profile, Comment
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-
-def create_new_test_user(username='new_user',
-                         email='new_user@host.com',
-                         password='new_user_password'):
-    return User.objects.create_user(username, email, password)
-
+'''
+Common Use Functions
+'''
+def create_new_test_user():
+    return User.objects.create(username='new_user',
+                               email='new_user@host.com',
+                               password='new_user_password')
 
 def create_new_test_author(user=None):
     if user is None:
@@ -17,7 +18,6 @@ def create_new_test_author(user=None):
     user.save()
     return user
 
-
 def create_test_news_post(title='Hello World', slug='hello-world',
                           content='Hello World, what more is there to say?',
                           user=None):
@@ -25,6 +25,37 @@ def create_test_news_post(title='Hello World', slug='hello-world',
     news_post = NewsPost.objects.create(
         title=title, slug=slug, content=content, user=user)
     return news_post
+'''
+Test Cases
+'''
+
+class ArticlesListViewTests(TestCase):
+    def test_articles_list_with_no_articles(self):
+        response = self.client.get(reverse('articles_list'))
+        self.assertContains(response, 'No articles')
+
+    def test_articles_list_with_articles(self):
+        author = create_new_test_author()
+        article = create_test_news_post(user=author)
+        article2 = create_test_news_post(user=author, slug='article2')
+        response = self.client.get(reverse('articles_list'))
+        self.assertContains(response, article.title)
+        self.assertContains(response, article2.title)
+
+'''
+class UserTestCase(TestCase):
+    def setup(self):
+        User.objects.create(username='new_user',
+                           email='new_user@host.com',
+                           password='new_user_password')
+
+    def test_user_profile_creaton(self):
+        user = User.objects.get(username='new_user')
+        profile = Profile.objects.get(user=user)
+        self.assertEqual(user.profile, profile)
+
+
+
 
 
 class ProfileTestCase(TestCase):
@@ -172,17 +203,4 @@ class AuthorArticlesViewTests(TestCase):
         self.assertContains(response, article.title)
         self.assertContains(response, article2.title)
 
-
-class ArticlesListViewTests(TestCase):
-
-    def test_articles_list_with_no_articles(self):
-        response = self.client.get(reverse('articles_list'))
-        self.assertContains(response, 'No articles')
-
-    def test_articles_list_with_articles(self):
-        author = create_new_test_author()
-        article = create_test_news_post(user=author)
-        article2 = create_test_news_post(user=author, slug='article2')
-        response = self.client.get(reverse('articles_list'))
-        self.assertContains(response, article.title)
-        self.assertContains(response, article2.title)
+'''

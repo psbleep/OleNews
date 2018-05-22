@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-
+from news_site.choices import STATUS_CHOICES
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -12,7 +12,9 @@ class Profile(models.Model):
                                 related_name='profile')
     user_bio = models.TextField(default="Fill out your Bio")
     email_consent = models.BooleanField(default=False)
-    
+    avitar = models.CharField(choices=STATUS_CHOICES,
+                              default="img/avitars/1.jpeg",
+                              max_length=200)
     def __str__(self):
         return self.user.username
 

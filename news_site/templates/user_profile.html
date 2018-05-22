@@ -11,7 +11,7 @@
 <div class="container-fluid">
   <div class = "row content">
     <div class="col-sm-3 sidenav">
-      <img style="max-width:200px" class="img-thumbnail " src="{% static "img/Temp_profile.jpeg" %}">
+      <img style="max-width:200px" class="img-thumbnail " src="{% static ""|add:user.profile.avitar %}">
       <h3>{{ user.username }} Profile</h3>
       <ul>
         <li><b>Name: {{ user.first_name }}</b></li>

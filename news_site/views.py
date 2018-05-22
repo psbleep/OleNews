@@ -98,7 +98,9 @@ def user_settings(request, pk):
         user_change_profile_form = UserChangeProfile(request.POST,
                                                      instance=request.user.profile)
         if user_change_form.is_valid():
+            #user_change_profile_form = "img/avitars/{}.jpeg".format(user_change_profile_form.avitar)
             user_change_form.save()
+            print(request.user.profile.avitar)
 
         if user_change_profile_form.is_valid():
             user_change_profile_form.save()
