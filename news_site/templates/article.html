@@ -1,38 +1,13 @@
-{% extends "index.html" %}
-{% load staticfiles %}
+{% extends "news_post_base.html" %}
 {% block content %}
 
 {% include "includes/navbar_main.html" %}
 <div class="container-fluid">
 
 
-	<h1>{{ object.title }}</h1><br>
-  <b>by <a href="{% url 'author' object.user.id %}">{{ object.user.username }}</a>
-{% if object.user.first_name %}
-	({{ object.user.first_name }} {{ object.user.profile.last_name }})
-	{% endif %}</b><br><br>
-<p>{{ object.content }}</p>
-<p>{{ object.likes }} likes</p>
-
-{% if object.comments %}
-<b>Comments</b>
-<ul>
-	{% for comment in object.comments.all %}
-		{% if comment.approved %}
-			<li>{{ comment.content }}</li>
-		{% endif %}
-
-{% endfor %}
-</ul>
-{% endif %}
-
-<form method="post" action="{% url 'comment_article' object.id %}">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit">Comment</button>
-</form>
-
-<p><a href="{% url 'like_article' object.id %}"><h1>LIKE</h1></a></p>
+{% with template_name=object.article|stringformat:"s" %}
+{% include ""|add:template_name %}
+{% endwith %}
 
 </div>
 {% endblock %}

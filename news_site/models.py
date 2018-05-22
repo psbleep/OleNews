@@ -38,11 +38,15 @@ class Profile(models.Model):
 
 class NewsPost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             limit_choices_to={'is_staff': True,
+                                               'is_active': True},
                              on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
+    article = models.FileField(upload_to='news_atricles/',
+                               default=' ')
     users_liked = models.ManyToManyField(
         Profile, related_name='news_posts_liked', blank=True)
 
@@ -57,6 +61,9 @@ class NewsPost(models.Model):
 
     def __str__(self):
         return self.title
+
+    def full_name(self):
+        return "{}, {}".format(self.user.last_name, self.user.first_name)
 
     class Meta:
         ordering = ['created_on']

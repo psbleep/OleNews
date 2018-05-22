@@ -7,13 +7,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css'%}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
-<meta name="description" content= "{{ article.content }}" >
-<meta name="title" content= "{{ article.title }}" >
+<meta name="description" content= "{{ object.content }}" >
+<meta name="title" content= "{{ object.title }}" >
 <!--OpenGraph Meta Data -->
 <meta property="og:url" content="{{ request.path }}" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content= "{{ article.title }}" />
-<meta property="og:description" content="{{ article.content }}" />
+<meta property="og:title" content= "{{ object.title }}" />
+<meta property="og:description" content="{{ object.content }}" />
 <meta property="og:image" content="{% static 'img/Ole/logo.jpg' %}" />
 <meta property="og:site_name" content="Ole Mundo" />
 
@@ -40,16 +40,16 @@
       "@type": "WebPage",
       "@id": "{{ request.get_full_path }}"
     },
-    "headline": "{{ article.title }}",
+    "headline": "{{ object.title }}",
     "image": [
       "{% static 'img/Ole/logo.jpg' %}"
     ],
-    "datePublished": "{{ article.created_on }}",
-    "dateModified": "{{ article.created_on }}",
-    "name": "{{ article.title }}",
+    "datePublished": "{{ object.created_on }}",
+    "dateModified": "{{ object.created_on }}",
+    "name": "{{ object.title }}",
     "author": {
       "@type": "Person",
-      "name": "{{ article.author }}"
+      "name": "{{ object.full_name }}"
     },
     "publisher": {
      "@type": "Organization",
@@ -59,7 +59,7 @@
        "url": "{% static 'img/Ole/logo.jpg' %}"
       }
     },
-    "description": "{{ article.content }}"
+    "description": "{{ object.content }}"
   }
   </script>
 </head>

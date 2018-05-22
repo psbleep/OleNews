@@ -1,5 +1,5 @@
 from .models import NewsPost, Profile
-from .forms import CommentForm, UserChange, UserChangeProfile,SignUpForm
+from .forms import CommentForm, UserChange, UserChangeProfile, SignUpForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -110,7 +110,8 @@ def user_settings(request, pk):
 
     else:
         user_change_form = UserChange(instance=request.user)
-        user_change_profile_form = UserChangeProfile(instance=request.user.profile)
+        user_change_profile_form = UserChangeProfile(
+            instance=request.user.profile)
         return render(request, 'user_pages/user_settings.html', {
             'form': user_change_form,
             'form2': user_change_profile_form,

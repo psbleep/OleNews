@@ -9,7 +9,7 @@ urlpatterns = [
     path('authors/<int:pk>/articles/', views.AuthorArticlesView.as_view(),
          name="author_articles"),
     path('articles/', views.ArticlesListView.as_view(), name="articles_list"),
-    path('articles/<int:pk>/', views.ArticleDetailView.as_view(),
+    path('articles/<slug:slug>/', views.ArticleDetailView.as_view(),
          name="article"),
     path('articles/<int:pk>/like/', views.LikeArticleView.as_view(),
          name='like_article'),

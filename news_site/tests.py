@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 '''
 Common Use Functions
 '''
-def create_new_test_user(username = None, email=None, password=None):
+
+
+def create_new_test_user(username=None, email=None, password=None):
     if username is None:
         username = 'new_user'
     if email is None:
@@ -25,6 +27,7 @@ def create_new_test_author(user=None):
     user.save()
     return user
 
+
 def create_test_news_post(title='Hello World', slug='hello-world',
                           content='Hello World, what more is there to say?',
                           user=None):
@@ -32,14 +35,18 @@ def create_test_news_post(title='Hello World', slug='hello-world',
     news_post = NewsPost.objects.create(
         title=title, slug=slug, content=content, user=user)
     return news_post
+
+
 '''
 Test Cases
 '''
+
+
 class UserProfileTestCase(TestCase):
     def setup(self):
         User.objects.create(username='new_user',
-                           email='new_user@host.com',
-                           password='new_user_password')
+                            email='new_user@host.com',
+                            password='new_user_password')
 
     def test_user_profile_creaton(self):
         user = create_new_test_user()
@@ -51,6 +58,7 @@ class UserProfileTestCase(TestCase):
         user.profile.email_consent = True
         profile = Profile.objects.get(user=user)
         self.assertEqual(profile.email_consent, True)
+
 
 '''
 class ArticlesListViewTests(TestCase):
