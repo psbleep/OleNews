@@ -129,8 +129,7 @@ class UserSignupView(FormView):
         password = self.request.POST['password1']
         #authenticate user then login
         user = authenticate(username=username, password=password)
-        p = Profile(user=user)
-        p.save()
+
         login(self.request, user)
         return super(UserSignupView, self).form_valid(form)
 

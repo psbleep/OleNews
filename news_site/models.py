@@ -25,6 +25,13 @@ class Profile(models.Model):
             self.news_posts_liked.add(news_post)
         except NewsPost.DoesNotExist:
             pass
+    @receiver(post_save, sender=User)
+    def create_profile(sender,  instance, created, **kwargs):
+        if created:
+            #create Profile for user
+            p = Profile(user=instance)
+            p.save()
+
 
 class NewsPost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
