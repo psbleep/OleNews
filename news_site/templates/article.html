@@ -9,5 +9,16 @@
 {% include ""|add:template_name %}
 {% endwith %}
 
+<div class="row">
+	<div class="col-sm-2" stlye="float:right;">
+	{% include "includes/like_button.html" %}	
+	</div>
+	<div class="col-sm-8">
+		{% include "includes/comments.html" %}
+	</div>
+	<div class="col-sm-2">
+	</div>
+
+</div>
 </div>
 {% endblock %}

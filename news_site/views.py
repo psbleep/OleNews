@@ -11,6 +11,7 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
+from django.http import JsonResponse
 
 
 def home(request):
@@ -138,14 +139,24 @@ class UserSignupView(FormView):
         return super(UserSignupView, self).form_valid(form)
 
 
-class LikeArticleView(generic.DetailView):
+class LikeArticleView(LoginRequiredMixin, generic.DetailView):
     model = NewsPost
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.request.user.profile.like(self.object)
-        return HttpResponseRedirect(
-            reverse('article', kwargs={'pk': self.object.id}))
+    def post(self, request, *args, **kwargs):
+        article = self.model.objects.get(
+            slug=kwargs['slug'])
+        try:
+            article_post = self.model.objects.get(
+                users_liked=request.user.profile)
+        except NewsPost.DoesNotExist:
+            article_post = None
+        if article_post is None:
+            article.users_liked.add(request.user.profile)
+            article.save()
+        else:
+            article.users_liked.remove(request.user.profile)
+            article.save()
+        return JsonResponse({'likes_count': article.likes()})
 
 
 class PasswordChangeView(PasswordChangeView):

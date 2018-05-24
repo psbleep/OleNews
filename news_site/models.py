@@ -50,7 +50,6 @@ class NewsPost(models.Model):
     users_liked = models.ManyToManyField(
         Profile, related_name='news_posts_liked', blank=True)
 
-    @property
     def likes(self):
         return self.users_liked.count()
 

@@ -9,11 +9,13 @@
 </div>
 
 <script>
+{% with slug=object.slug|stringformat:"s" %}
 function addLike(){
   $.ajax({
     type: "POST",
-    url: "{% url 'like' %}",
-    data: {'slug': '{{ post }}', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+    url: "/articles/{{ slug }}/like/",
+  {% endwith %}
+    data: {'slug': '{{ object.slug }}', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
     dataType: "json",
     success: function(response) {
       document.getElementById("show_results").innerHTML = '<span class="glyphicon glyphicon-heart" ></span> Likes: ' + response.likes_count;
