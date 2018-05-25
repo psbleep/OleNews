@@ -59,9 +59,13 @@ class ArticleDetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(context)
+        print(kwargs)
+        print(self)
         post_pk = self.object.id
         user_pk = self.request.user.id
         form = CommentForm(post_pk=post_pk, user_pk=user_pk)
+        print(form)
         context.update({'form': form})
         return context
 
@@ -74,10 +78,13 @@ class CreateCommentView(LoginRequiredMixin, generic.CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['post_pk'] = self.kwargs.get('pk')
         kwargs['user_pk'] = self.request.user.id
+        if 'parent_pk' in kwargs['data']:
+            parent_pk = kwargs['data']['parent_pk']
+            kwargs['parent_pk'] = parent_pk
         return kwargs
 
     def get_success_url(self):
-        return reverse('article', kwargs={'pk': self.object.post.id})
+        return reverse('article', kwargs={'slug': self.object.post.slug})
 
 
 class UserProfileView(generic.DetailView):

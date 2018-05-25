@@ -80,7 +80,9 @@ class Comment(models.Model):
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=True)
+    parent = models.ForeignKey('self', null=True, blank=True,
+                               on_delete=models.CASCADE, related_name='reply')
 
     def approve(self):
         if not self.approved:
@@ -94,6 +96,16 @@ class Comment(models.Model):
         return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
                                                                self.post,
                                                                self.approved)
+
+    def children(self):
+        return Comment.objects.filter(parent=self)
+
+    @property
+    def is_parent(self):
+        if self.parent is not None:
+            return False
+
+        return True
 
     class Meta:
         ordering = ('created',)
