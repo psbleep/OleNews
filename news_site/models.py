@@ -36,6 +36,22 @@ class Profile(models.Model):
             p.save()
 
 
+def attachment_path_with_name(instance, filename):
+    # Create subfolders for author posts
+    return "news_site/static/news_articles/{}_{}/{}".format(
+                                                    instance.user.first_name,
+                                                    instance.user.last_name,
+                                                    filename)
+
+
+def attachment_path_with_name_img(instance, filename):
+    # Create subfolders for featured_img
+    return "news_site/static/img/{}_{}/img/{}".format(
+                                                instance.user.first_name,
+                                                instance.user.last_name,
+                                                filename)
+
+
 class NewsPost(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              limit_choices_to={'is_staff': True,
@@ -45,10 +61,15 @@ class NewsPost(models.Model):
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    article = models.FileField(upload_to='news_atricles/',
+    article = models.FileField(upload_to=attachment_path_with_name,
                                default=' ')
+    featured_img = models.FileField(upload_to=attachment_path_with_name_img,
+                                    default='default')
     users_liked = models.ManyToManyField(
         Profile, related_name='news_posts_liked', blank=True)
+
+    def get_img_url(self):
+        return self.featured_img.name[10:]
 
     def likes(self):
         return self.users_liked.count()

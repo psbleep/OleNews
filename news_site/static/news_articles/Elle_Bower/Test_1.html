@@ -8,20 +8,20 @@
         <div class="col-lg-8">
 
           <!-- Title -->
-          <h1 class="mt-4"> {{ object.title }}</h1>
+          <h1 class="mt-4"> {{ article.title }}</h1>
 
 
 
           <!-- Author -->
           <p class="lead">
             by
-            <a href="/authors/{{ author.id }}">{{ object.user.username }}</a>
+            <a href="/authors/{{ author.id }}">{{ article.author }}</a>
           </p>
 
           <hr>
 
           <!-- Date/Time -->
-          <p>Posted on {{ object.created_on }}</p>
+          <p>Posted on {{ article.created_on }}</p>
 
           <hr>
 
@@ -73,6 +73,7 @@
               <div class="col-sm-2">
               </div>
           </div>
+
           <hr>
 
 
@@ -83,6 +84,7 @@
       <!-- /.row -->
 
     </div>
+
     <!-- /.container -->
   </body>
 </html>

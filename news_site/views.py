@@ -12,10 +12,20 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 from django.http import JsonResponse
+from datetime import datetime, timedelta
 
 
 def home(request):
-    return render(request, 'home.html', {'page': 'home'})
+    delta = datetime.today() - timedelta(days=7)
+    posts = NewsPost.objects.filter(created_on__range=[
+        delta, datetime.today()])
+    p = []
+    for path in posts:
+        print(path.featured_img)
+        print(path.featured_img.url)
+        print(path.featured_img.path)
+        print(path.featured_img.name)
+    return render(request, 'home.html', {'page': 'home', 'object': posts})
 
 
 class AuthorsListView(generic.ListView):
