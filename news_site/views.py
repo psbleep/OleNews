@@ -19,12 +19,6 @@ def home(request):
     delta = datetime.today() - timedelta(days=7)
     posts = NewsPost.objects.filter(created_on__range=[
         delta, datetime.today()])
-    p = []
-    for path in posts:
-        print(path.featured_img)
-        print(path.featured_img.url)
-        print(path.featured_img.path)
-        print(path.featured_img.name)
     return render(request, 'home.html', {'page': 'home', 'object': posts})
 
 
@@ -33,7 +27,9 @@ class AuthorsListView(generic.ListView):
     template_name = "authors_list.html"
 
     def get_queryset(self):
-        return Profile.objects.filter(user__is_staff=True)
+        authors = Profile.objects.filter(user__is_staff=True).exclude(
+                                        user__is_superuser=True)
+        return authors
 
 
 class AuthorDetailView(generic.DetailView):
@@ -115,8 +111,9 @@ def user_settings(request, pk):
     if request.method == 'POST':
         user_change_form = UserChange(request.POST,
                                       instance=request.user)
-        user_change_profile_form = UserChangeProfile(request.POST,
-                                                     instance=request.user.profile)
+        user_change_profile_form = UserChangeProfile(
+                                   request.POST,
+                                   instance=request.user.profile)
         if user_change_form.is_valid():
             user_change_form.save()
             print(request.user.profile.avitar)
