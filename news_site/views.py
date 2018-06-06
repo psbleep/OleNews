@@ -159,16 +159,13 @@ class LikeArticleView(LoginRequiredMixin, generic.DetailView):
     def post(self, request, *args, **kwargs):
         article = self.model.objects.get(
             slug=kwargs['slug'])
-        try:
-            article_post = self.model.objects.get(
-                users_liked=request.user.profile)
-        except NewsPost.DoesNotExist:
-            article_post = None
-        if article_post is None:
-            article.users_liked.add(request.user.profile)
+        print(article)
+        print(article.get_liked_posts())
+        if request.user in article.get_liked_posts():
+            article.users_liked.remove(request.user.profile)
             article.save()
         else:
-            article.users_liked.remove(request.user.profile)
+            article.users_liked.add(request.user.profile)
             article.save()
         return JsonResponse({'likes_count': article.likes()})
 

@@ -28,6 +28,12 @@ class Profile(models.Model):
         except NewsPost.DoesNotExist:
             pass
 
+    def liked(self):
+        return self.news_posts_liked.count()
+
+    def get_liked_posts(self):
+        return self.news_posts_liked.all()
+
     @receiver(post_save, sender=User)
     def create_profile(sender,  instance, created, **kwargs):
         if created:
@@ -78,6 +84,9 @@ class NewsPost(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    def get_liked_posts(self):
+        return self.users_liked.all()
 
     def __str__(self):
         return self.title

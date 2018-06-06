@@ -40,5 +40,11 @@ vertical-align: top;
   margin-top: -0.5em;
   width: 5.5em;
   max-height: 2.8em;
-
+}
+.item{
+  
+}
+.carousel-caption{
+  position: relative;
+  margin-left: 100px;
 }
