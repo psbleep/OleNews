@@ -161,7 +161,7 @@ class LikeArticleView(LoginRequiredMixin, generic.DetailView):
             slug=kwargs['slug'])
         print(article)
         print(article.get_liked_posts())
-        if request.user in article.get_liked_posts():
+        if request.user.profile in article.get_liked_posts():
             article.users_liked.remove(request.user.profile)
             article.save()
         else:
