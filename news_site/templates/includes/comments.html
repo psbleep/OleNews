@@ -1,32 +1,49 @@
-<!-- Comments Form -->
-<div class="card my-4">
-  {% if user.is_authenticated %}
-  <p></p>
-  {% else %}
+{% if user.is_authenticated %}
+  <p>Posting as: {{ user.username }}</p>
+  {% with pk=object.id|stringformat:"s" %}
+  <form method="post" class = "comment_form" action="/articles/{{pk}}/comment/">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value = 'Comment' class="save btn btn-default">
+    {% endwith %}
+  </form>
+{% else %}
   <p>Plese Log in to Comment</p>
-  {% endif %}
-  <h5 class="card-header">Leave a Comment:</h5>
-  <div class="card-body">
-    <p>Posting as: {{ user.username }}</p>
-    <form method="post" class = "comment_form" >
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="save btn btn-default">Submit</button>
-    </form>
-  </div>
-</div>
+{% endif %}
+
 
 <!-- Single Comment -->
+{% for comment in object.comments.all%}
+  {% if comment.approved is True %}
+  <div class="media mb-4">
+    <div class="media-body">
+      <h5 class="mt-0">Posted by: {{comment.user}}</h5>
+      <p>Posted on {{ comment.created }}</p>
+      {{comment.content}}
+    </div>
+    <!-- Comments Reply Form
+    <div style="float:right;">
+    {% if user.is_authenticated %}
+      <div class="card my-4">
+        <h5 class="card-header">Leave a Reply to {{ comment.user }}:</h5>
+        <div class="card-body">
+          <p>Posting as: {{ user.username }}</p>
+          {% with pk=object.id|stringformat:"s" %}
+          <form method="post" class = "comment_form" action="/articles/{{pk}}/comment/">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type='hidden' name='parent_pk' value = '{{ comment.id }}' class="save btn btn-default">
+            <input type="submit" value = 'Reply' class="save btn btn-default">
+            {% endwith %}
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <p></p>
+    {% endif %}
 
-{% for comment in article.comments.all%}
-{% if comment.approved is True %}
-<div class="media mb-4">
-  <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-  <div class="media-body">
-    <h5 class="mt-0">Posted by: {{comment.user}}</h5>
-    <p>Posted on {{ comment.created }}</p>
-    {{comment.content}}
   </div>
+  -->
 </div>
-{% endif %}
+  {% endif %}
 {% endfor %}

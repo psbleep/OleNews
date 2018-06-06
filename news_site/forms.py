@@ -24,11 +24,19 @@ class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         post_pk = kwargs.pop('post_pk')
         user_pk = kwargs.pop('user_pk')
+        if 'parent_pk' in kwargs:
+            parent_pk = kwargs.pop('parent_pk')
+        else:
+            parent_pk = None
         super().__init__(*args, **kwargs)
         self.fields['post'].initial = NewsPost.objects.get(pk=post_pk)
         self.fields['post'].widget = forms.HiddenInput()
         self.fields['user'].initial = User.objects.get(pk=user_pk)
         self.fields['user'].widget = forms.HiddenInput()
+        if parent_pk is not None:
+            print("Adding to Fields")
+            self.fields['parent'].initial = Comment.objects.get(pk=parent_pk)
+            self.fields['parent'].widget = forms.HiddenInput()
 
     class Meta:
         model = Comment

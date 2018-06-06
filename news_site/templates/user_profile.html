@@ -16,7 +16,7 @@
       <ul>
         <li><b>Name: {{ user.first_name }}</b></li>
         <li><b>Joined: {{ user.date_joined|date:"F-Y" }}</b></li>
-        <li><b>Likes: {{user.likes }}</b></li>
+        <li><b>Likes: {{user.profile.liked }}</b></li>
         <li><b>Comments: {{ user.comment_total }}</b></li>
       </ul><br>
     </div>
@@ -26,7 +26,8 @@
             <h4>{{  user.username  }} Bio</h4>
           </div>
           <div class="panel-body">
-            <p>{{ user.profile.user_bio }}</p>
+            <p>{{ user.profile.user_bio }}
+            </p>
         </div>
         </div>
         <div class="panel panel-default">
@@ -40,13 +41,13 @@
               </tr>
             </thead>
             <tbody>
-            {% for article in liked_articles %}
-              <tr>
-                <td><a href = "/authors/{{ article.author.id }}/{{ article.slug }}">{{ article }}</a></td>
-                <td>{{ article.author }}</td>
-                <td>{{ article.content }}</td>
-              </tr>
-            {% endfor %}
+              {% for article in user.profile.get_liked_posts%}
+                <tr>
+                  <td><a href = "{% url 'article' article.slug %}">{{ article }}</a></td>
+                  <td>{{ article.full_name }}</td>
+                  <td>{{ article.content }}</td>
+                </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>

@@ -28,12 +28,34 @@ class Profile(models.Model):
         except NewsPost.DoesNotExist:
             pass
 
+    def liked(self):
+        return self.news_posts_liked.count()
+
+    def get_liked_posts(self):
+        return self.news_posts_liked.all()
+
     @receiver(post_save, sender=User)
     def create_profile(sender,  instance, created, **kwargs):
         if created:
             # create Profile for user
             p = Profile(user=instance)
             p.save()
+
+
+def attachment_path_with_name(instance, filename):
+    # Create subfolders for author posts
+    return "news_site/static/news_articles/{}_{}/{}".format(
+                                                    instance.user.first_name,
+                                                    instance.user.last_name,
+                                                    filename)
+
+
+def attachment_path_with_name_img(instance, filename):
+    # Create subfolders for featured_img
+    return "news_site/static/img/{}_{}/img/{}".format(
+                                                instance.user.first_name,
+                                                instance.user.last_name,
+                                                filename)
 
 
 class NewsPost(models.Model):
@@ -45,12 +67,16 @@ class NewsPost(models.Model):
     slug = models.SlugField(unique=True, max_length=255)
     content = models.TextField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
-    article = models.FileField(upload_to='news_atricles/',
+    article = models.FileField(upload_to=attachment_path_with_name,
                                default=' ')
+    featured_img = models.FileField(upload_to=attachment_path_with_name_img,
+                                    default='default')
     users_liked = models.ManyToManyField(
         Profile, related_name='news_posts_liked', blank=True)
 
-    @property
+    def get_img_url(self):
+        return self.featured_img.name[10:]
+
     def likes(self):
         return self.users_liked.count()
 
@@ -58,6 +84,9 @@ class NewsPost(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    def get_liked_posts(self):
+        return self.users_liked.all()
 
     def __str__(self):
         return self.title
@@ -81,7 +110,9 @@ class Comment(models.Model):
     content = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=True)
+    parent = models.ForeignKey('self', null=True, blank=True,
+                               on_delete=models.CASCADE, related_name='reply')
 
     def approve(self):
         if not self.approved:
@@ -95,6 +126,16 @@ class Comment(models.Model):
         return 'Comment by "{}" on "{}" is approved {}'.format(self.user,
                                                                self.post,
                                                                self.approved)
+
+    def children(self):
+        return Comment.objects.filter(parent=self)
+
+    @property
+    def is_parent(self):
+        if self.parent is not None:
+            return False
+
+        return True
 
     class Meta:
         ordering = ('created',)

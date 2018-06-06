@@ -11,10 +11,15 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
+from django.http import JsonResponse
+from datetime import datetime, timedelta
 
 
 def home(request):
-    return render(request, 'home.html', {'page': 'home'})
+    delta = datetime.today() - timedelta(days=7)
+    posts = NewsPost.objects.filter(created_on__range=[
+        delta, datetime.today()])
+    return render(request, 'home.html', {'page': 'home', 'object': posts})
 
 
 class AuthorsListView(generic.ListView):
@@ -22,7 +27,9 @@ class AuthorsListView(generic.ListView):
     template_name = "authors_list.html"
 
     def get_queryset(self):
-        return Profile.objects.filter(user__is_staff=True)
+        authors = Profile.objects.filter(user__is_staff=True).exclude(
+                                        user__is_superuser=True)
+        return authors
 
 
 class AuthorDetailView(generic.DetailView):
@@ -58,9 +65,13 @@ class ArticleDetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(context)
+        print(kwargs)
+        print(self)
         post_pk = self.object.id
         user_pk = self.request.user.id
         form = CommentForm(post_pk=post_pk, user_pk=user_pk)
+        print(form)
         context.update({'form': form})
         return context
 
@@ -73,10 +84,13 @@ class CreateCommentView(LoginRequiredMixin, generic.CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['post_pk'] = self.kwargs.get('pk')
         kwargs['user_pk'] = self.request.user.id
+        if 'parent_pk' in kwargs['data']:
+            parent_pk = kwargs['data']['parent_pk']
+            kwargs['parent_pk'] = parent_pk
         return kwargs
 
     def get_success_url(self):
-        return reverse('article', kwargs={'pk': self.object.post.id})
+        return reverse('article', kwargs={'slug': self.object.post.slug})
 
 
 class UserProfileView(generic.DetailView):
@@ -97,8 +111,9 @@ def user_settings(request, pk):
     if request.method == 'POST':
         user_change_form = UserChange(request.POST,
                                       instance=request.user)
-        user_change_profile_form = UserChangeProfile(request.POST,
-                                                     instance=request.user.profile)
+        user_change_profile_form = UserChangeProfile(
+                                   request.POST,
+                                   instance=request.user.profile)
         if user_change_form.is_valid():
             user_change_form.save()
             print(request.user.profile.avitar)
@@ -138,14 +153,21 @@ class UserSignupView(FormView):
         return super(UserSignupView, self).form_valid(form)
 
 
-class LikeArticleView(generic.DetailView):
+class LikeArticleView(LoginRequiredMixin, generic.DetailView):
     model = NewsPost
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.request.user.profile.like(self.object)
-        return HttpResponseRedirect(
-            reverse('article', kwargs={'pk': self.object.id}))
+    def post(self, request, *args, **kwargs):
+        article = self.model.objects.get(
+            slug=kwargs['slug'])
+        print(article)
+        print(article.get_liked_posts())
+        if request.user.profile in article.get_liked_posts():
+            article.users_liked.remove(request.user.profile)
+            article.save()
+        else:
+            article.users_liked.add(request.user.profile)
+            article.save()
+        return JsonResponse({'likes_count': article.likes()})
 
 
 class PasswordChangeView(PasswordChangeView):
