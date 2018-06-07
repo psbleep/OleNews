@@ -3,11 +3,7 @@
 {% block content %}
 
 {% include "includes/navbar_main.html" %}
-<h1>Temp User Profile Layout</h1>
-{% if user == user %}
-<a href="{% url 'user_profile_settings' user.id %}">Edit Profile</a>
-{% endif %}
-
+<h1>User Profile</h1>
 <div class="container-fluid">
   <div class = "row content">
     <div class="col-sm-3 sidenav">
@@ -18,6 +14,9 @@
         <li><b>Joined: {{ user.date_joined|date:"F-Y" }}</b></li>
         <li><b>Likes: {{user.profile.liked }}</b></li>
         <li><b>Comments: {{ user.comment_total }}</b></li>
+        {% if user == user %}
+        <li><b><a href="{% url 'user_profile_settings' user.id %}">Edit Profile</a></b></li>
+        {% endif %}
       </ul><br>
     </div>
     <div class="col-sm-8">
@@ -25,31 +24,33 @@
           <div class = "panel-heading">
             <h4>{{  user.username  }} Bio</h4>
           </div>
-          <div class="panel-body">
+          <div class="panel-body table-responsive" id="bio-table">
             <p>{{ user.profile.user_bio }}
             </p>
         </div>
         </div>
         <div class="panel panel-default">
            <h4 class = "panel-heading">Favorite Articles</h4>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Article</th>
-                <th>Author</th>
-                <th>Something?</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for article in user.profile.get_liked_posts%}
+           <div class="table-responsive" id="bio-table">
+            <table class="table table-striped">
+              <thead>
                 <tr>
-                  <td><a href = "{% url 'article' article.slug %}">{{ article }}</a></td>
-                  <td>{{ article.full_name }}</td>
-                  <td>{{ article.content }}</td>
+                  <th>Article</th>
+                  <th>Author</th>
+                  <th>Description</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% for article in user.profile.get_liked_posts%}
+                  <tr>
+                    <td><a href = "{% url 'article' article.slug %}">{{ article }}</a></td>
+                    <td>{{ article.full_name }}</td>
+                    <td>{{ article.content }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
  </div>

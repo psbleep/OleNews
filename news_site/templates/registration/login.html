@@ -1,19 +1,33 @@
-{% block title %}Login{% endblock %}
 
+{% extends 'index.html' %}
 {% block content %}
-  <h2>Login</h2>
-  <form  method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    <p>
-      {{ field.label_tag }}<br>
-      {{ field }}
-        {% if field.help_text %}
-          <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-    </p>
-    {% endfor %}
-    <button type="submit">Login</button>
-  </form>
-  <a  href="/signup"><button type="button">sign up</button></a>
+{% include "includes/navbar_main.html" %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-5">
+    </div>
+    <div class="col-sm-2 text-center">
+
+    </div>
+  </div>
+  <div class="col-sm-4">
+  </div>
+  <div class="row">
+    <div class="col-sm-4 text-left">
+      <form  method="post"> {% csrf_token %}
+        <div class="panel-group">
+          <div class="panel panel-primary">
+              <div class="panel-heading" id="log-in"><h2>Login</h2></div>
+              {% for field in form %}
+                <div class="panel-body">{{ field.label_tag }} {{ field }}</div>
+              {% endfor %}
+          </div>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    </div>
+  <div class="col-sm-4">
+  </div>
+</div>
+</div>
 {% endblock %}

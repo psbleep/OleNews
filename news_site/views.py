@@ -13,13 +13,23 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 from django.http import JsonResponse
 from datetime import datetime, timedelta
+import random
 
 
 def home(request):
     delta = datetime.today() - timedelta(days=7)
     posts = NewsPost.objects.filter(created_on__range=[
         delta, datetime.today()])
-    return render(request, 'home.html', {'page': 'home', 'object': posts})
+    favorite = NewsPost.objects.all()
+    max = 2
+    popular_post = []
+    for f in range(0, 3):
+        f = random.choice(favorite)
+        popular_post.append(f)
+    return render(request, 'home.html', {
+                    'page': 'home',
+                    'object': posts,
+                    'favorite': popular_post[:3]})
 
 
 class AuthorsListView(generic.ListView):
@@ -161,7 +171,7 @@ class LikeArticleView(LoginRequiredMixin, generic.DetailView):
             slug=kwargs['slug'])
         print(article)
         print(article.get_liked_posts())
-        if request.user in article.get_liked_posts():
+        if request.user.profile in article.get_liked_posts():
             article.users_liked.remove(request.user.profile)
             article.save()
         else:
