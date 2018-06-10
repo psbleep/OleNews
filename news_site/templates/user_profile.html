@@ -10,11 +10,11 @@
       <img style="max-width:200px" class="img-thumbnail " src="{% static ""|add:user.profile.avitar %}">
       <h3>{{ user.username }} Profile</h3>
       <ul>
-        <li><b>Name: {{ user.first_name }}</b></li>
+        <li><b>Name: {{ user.first_name }} {{user.last_name}}</b></li>
         <li><b>Joined: {{ user.date_joined|date:"F-Y" }}</b></li>
         <li><b>Likes: {{user.profile.liked }}</b></li>
         <li><b>Comments: {{ user.comment_total }}</b></li>
-        {% if user == user %}
+        {% if user == request.user %}
         <li><b><a href="{% url 'user_profile_settings' user.id %}">Edit Profile</a></b></li>
         {% endif %}
       </ul><br>
@@ -25,8 +25,7 @@
             <h4>{{  user.username  }} Bio</h4>
           </div>
           <div class="panel-body table-responsive" id="bio-table">
-            <p>{{ user.profile.user_bio }}
-            </p>
+            <p> {{ user.profile.user_bio }} </p>
         </div>
         </div>
         <div class="panel panel-default">

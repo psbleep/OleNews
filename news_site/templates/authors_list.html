@@ -1,19 +1,43 @@
 {% extends "index.html" %}
-{% load staticfiles %}
 {% block content %}
-
 {% include "includes/navbar_main.html" %}
-<div class="container-fluid">
-  <h1>Authors</h1>
-  {% if object_list %}
-    <ul>
-    {% for author in object_list %}
-    <li><a href="{% url 'author' author.id %}">{{ author.user.username }}</a></li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    No authors here!
-  {% endif %}
-</div>
 
+<div class="container-fluid">
+  <div class = "row">
+    <div class = "col-sm-2">
+    </div>
+    <div class = "col-sm-8">
+      <h1>Authors</h1>
+      {% if object_list %}
+      {% for author in object_list %}
+      <section>
+      <div class="container">
+      <div class="card">
+        <div class="row disply-author">
+            <div class="col-sm-3">
+                <img src="https://placeholder.baker.com/200" class="w-100">
+            </div>
+            <div class="col-sm-8">
+              <div class="card-block">
+                <h4 class="card-title">{{ author.user.first_name }} {{ author.user.last_name}}</h4>
+                <a href="{% url 'author' author.id %}" class="btn btn-primary">{{ author.user.username }}</a>
+                <p class="card-text">{{ author.user_bio }}</p>
+              </div>
+            </div>
+            <div class="col-sm-2">
+            </div>
+          </div>
+        </div>
+      </div>
+      </section>
+      <br>
+      {% endfor %}
+      {% else %}
+        No authors here!
+      {% endif %}
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+</div>
 {% endblock %}

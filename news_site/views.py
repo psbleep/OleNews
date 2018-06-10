@@ -68,6 +68,10 @@ class ArticlesListView(generic.ListView):
     model = NewsPost
     template_name = "articles_list.html"
 
+    def get_queryset(self):
+        article = NewsPost.objects.order_by('-created_on')[:4]
+        return article
+
 
 class ArticleDetailView(LoginRequiredMixin, generic.DetailView):
     model = NewsPost

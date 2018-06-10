@@ -10,9 +10,28 @@
 {% if object_list %}
 <ul>
   {% for article in object_list %}
-  <li><a href="{% url 'article' article.id %}">{{ article.title }}</a></li>
+  <section>
+  <div class="container">
+  <div class="card">
+    <div class="row">
+        <div class="col-sm-4">
+            <img src="/{{ article.get_img_url}}" class="w-100">
+        </div>
+        <div class="col-sm-8">
+          <div class="card-block">
+            <a href="{% url 'article' article.slug %}"><h4 class="card-title">{{ article.title }}</h4></a>
+            <p>By: {{ article.user.username }} </p>
+            <p class="card-text">{{ article.content }}</p>
+          </div>
+        </div>
+        <div class="col-sm-2">
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+  <br>
   {% endfor %}
-</ul>
 {% else %}
   No articles here!
 {% endif %}

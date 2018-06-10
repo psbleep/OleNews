@@ -1,4 +1,46 @@
+/*
+Nav Bar Top:
+  Below is CSS for the navigatoin Bar
+*/
+.navbar-default {
+  background-color: #3a9e34;
+  height: 4.5em;
+ }
+.navbar-default .navbar-nav > li > a{
+  color:white;
+  font-size: 1.4em;
+}
+#navbar{
+  background-color: #3a9e34;
+}
+/*END NAVBAR CSS*/
+/*
+Begin Home Page CSS
+*/
+.right-side {
+    background-color: blue;
+    float: right;
+    display: table-cell;
+}
+#right-main{
+  max-height:300px;
+  max-width:100%;
+}
+.left-side {
+    background-color: red;
+    float: left;
+}
 
+#main_img{
+  background-image: url("/static/img/home/temp_bg_ole.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: static;
+  width: 100%;
+  z-index: -1;
+}
+
+/* END HOME PAGE CSS */
 #sign-up {
   background-color: #3A9E34;
 }
@@ -13,35 +55,13 @@
   max-height:150px;
 }
 
-#right-main{
-  max-height:300px;
-}
 
-.right-side {
-    background-color: blue;
-    float: none;
-    display: table-cell;
-    border: 1px solid;
-}
 
-.left-side {
-    background-color: red;
-    float: none;
-}
 
-.navbar-default {
-  background-color: #3a9e34;
-  height: 4.5em;
- }
-.navbar-default .navbar-nav > li > a{
-  color:white;
-  font-size: 1.4em;
-}
+
+
 body{
   background-color: #e4e4e4;
-}
-#navbar{
-  background-color: #3a9e34;
 }
 #id_content{
   height:5em;
@@ -56,14 +76,6 @@ white-space: pre;
 text-overflow: ellipsis;
 }
 
-#main_img{
-  background-image: url("/static/img/home/temp_bg_ole.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: static;
-  width: 100%;
-  z-index: -1;
-}
 #front-text > h1{
     color: white;
 }
@@ -82,4 +94,14 @@ text-overflow: ellipsis;
 .carousel-caption{
   position: relative;
   margin-left: 100px;
+}
+/*
+Author List Page
+*/
+.disply-author{
+  display: inline-block;
+  overflow-y: scroll;
+  max-width: 90%;
+
+  max-height: 200px;
 }
